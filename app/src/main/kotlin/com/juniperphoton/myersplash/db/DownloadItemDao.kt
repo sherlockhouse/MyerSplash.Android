@@ -54,5 +54,5 @@ abstract class DownloadItemDao {
     abstract suspend fun resetStatus(id: String)
 
     @Query("UPDATE download_item SET status=${DownloadItem.DOWNLOAD_STATUS_FAILED}, progress=0 WHERE status!=${DownloadItem.DOWNLOAD_STATUS_OK}")
-    abstract fun markAllFailed()
+    abstract suspend fun markAllFailed()
 }

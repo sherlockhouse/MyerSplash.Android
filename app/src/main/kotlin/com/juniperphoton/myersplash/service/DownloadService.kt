@@ -32,7 +32,9 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Pasteur.info(TAG, "on start command")
         intent?.let {
-            onHandleIntent(it)
+            launch {
+                onHandleIntent(it)
+            }
         }
         return START_STICKY
     }
@@ -43,14 +45,12 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
         super.onDestroy()
     }
 
-    private fun checkStatus() = runBlocking {
-        withContext(Dispatchers.IO) {
-            Pasteur.info(TAG, "checking status, thread: ${Thread.currentThread()}")
-            dao.markAllFailed()
-        }
+    private suspend fun checkStatus() {
+        Pasteur.info(TAG, "checking status, thread: ${Thread.currentThread()}")
+        dao.markAllFailed()
     }
 
-    private fun onHandleIntent(intent: Intent) {
+    private suspend fun onHandleIntent(intent: Intent) {
         if (intent.getBooleanExtra(Params.CHECK_STATUS, false)) {
             checkStatus()
             if (downloadUrlToJobMap.isEmpty()) {
@@ -74,42 +74,48 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
         }
 
         if (cancelJob) {
-            Pasteur.d(TAG, "on handle intent cancelled")
-            val job = downloadUrlToJobMap[downloadUrl]
-            if (job != null) {
-                job.cancel()
-                Pasteur.info(TAG, "job cancelled")
-                NotificationUtils.cancelNotification(Uri.parse(downloadUrl))
-                Toaster.sendShortToast(getString(R.string.cancelled_download))
-            }
+            cancelJob(downloadUrl)
         } else {
             Pasteur.d(TAG, "on handle intent progress")
             downloadImage(downloadUrl, fileName, previewUri, isUnsplash)
         }
     }
 
+    private suspend fun cancelJob(url: String) {
+        Pasteur.d(TAG, "on handle intent cancelled, thread: ${Thread.currentThread()}")
+        downloadUrlToJobMap[url]?.let { job ->
+            job.cancelAndJoin()
+            downloadUrlToJobMap.remove(url)
+            Pasteur.info(TAG, "job cancelled")
+            NotificationUtils.cancelNotification(Uri.parse(url))
+            Toaster.sendShortToast(getString(R.string.cancelled_download))
+        }
+    }
+
     private fun downloadImage(url: String, fileName: String,
                               previewUri: Uri?, isUnsplash: Boolean) {
-        val job = launch {
-            val file = DownloadUtils.getFileToSave(fileName)
+        val job = launch(context = CoroutineExceptionHandler { _, e ->
+            Pasteur.e(TAG, "CoroutineExceptionHandler error $e, url $url")
+            onError(url, fileName, null, true)
+        }) {
             try {
+                val file = DownloadUtils.getFileToSave(fileName)
                 val responseBody = CloudService.downloadPhoto(url)
-                Pasteur.d(TAG, "outputFile download onNext, size=${responseBody.contentLength()}, thread: ${Thread.currentThread()}")
-                val success = responseBody.writeToFile(file!!.path) {
-                    dao.setProgress(url, it)
-                } != null
 
-                if (!success) {
-                    onError(url, fileName, previewUri, true)
-                } else {
-                    onSuccess(url, file, previewUri, isUnsplash)
+                Pasteur.d(TAG, "outputFile download onNext, " +
+                        "size=${responseBody.contentLength()}")
+
+                responseBody.writeToFile(file!!.path) { p ->
+                    Pasteur.i(TAG, "dao setting progress: $p")
+                    dao.setProgress(url, p)
                 }
-
+                onSuccess(url, file, previewUri, isUnsplash)
                 Pasteur.d(TAG, getString(R.string.completed))
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Pasteur.d(TAG, "on handle intent error $e, url $url, thread ${Thread.currentThread()}")
-                onError(url, fileName, null, e !is CancellationException)
+            } catch (e: CancellationException) {
+                // CancellationException will be ignored by CoroutineExceptionHandler,
+                // thus we handle it here.
+                Pasteur.e(TAG, "CancellationException error $e, url $url")
+                onError(url, fileName, null, false)
             }
         }
         downloadUrlToJobMap[url] = job
