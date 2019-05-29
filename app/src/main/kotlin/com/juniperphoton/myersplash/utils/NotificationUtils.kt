@@ -22,6 +22,8 @@ object NotificationUtils {
     private const val TAG = "NotificationUtils"
     private const val NOTIFICATION_CHANNEL_ID = "default_channel"
 
+    const val EXTRA_NOTIFICATION_ID = "notification_id"
+
     private val notificationManager: NotificationManager
         get() {
             return App.instance.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -43,7 +45,11 @@ object NotificationUtils {
     }
 
     fun cancelNotification(downloadUri: Uri) {
-        notificationManager.cancel(downloadUri.hashCode())
+        cancelNotification(downloadUri.hashCode())
+    }
+
+    fun cancelNotification(id: Int) {
+        notificationManager.cancel(id)
     }
 
     fun showErrorNotification(downloadUri: Uri, fileName: String, url: String, previewUri: Uri?) {
@@ -83,9 +89,9 @@ object NotificationUtils {
             }
         }
         if (filePath != null) {
-            injectViewIntent(builder, filePath)
+            injectViewIntent(builder, id, filePath)
         } else {
-            injectAppIntent(builder)
+            injectAppIntent(builder, id)
         }
 
         Pasteur.info(TAG, "completed: $downloadUri")
@@ -107,19 +113,21 @@ object NotificationUtils {
                 builder.setLargeIcon(b)
             }
         }
-        injectAppIntent(builder)
+        injectAppIntent(builder, id)
         notificationManager.notify(id, builder.build())
     }
 
-    private fun injectAppIntent(builder: NotificationCompat.Builder) {
+    private fun injectAppIntent(builder: NotificationCompat.Builder, id: Int) {
         val intent = Intent(App.instance, DownloadsListActivity::class.java)
+        intent.putExtra(EXTRA_NOTIFICATION_ID, id)
         val resultPendingIntent = PendingIntent.getActivity(App.instance, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         builder.setContentIntent(resultPendingIntent)
     }
 
-    private fun injectViewIntent(builder: NotificationCompat.Builder, filePath: String) {
+    private fun injectViewIntent(builder: NotificationCompat.Builder, id: Int, filePath: String) {
         val intent = Intent(App.instance, EditActivity::class.java)
         intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(File(filePath)))
+        intent.putExtra(EXTRA_NOTIFICATION_ID, id)
         val resultPendingIntent = PendingIntent.getActivity(App.instance, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         builder.setContentIntent(resultPendingIntent)
     }
