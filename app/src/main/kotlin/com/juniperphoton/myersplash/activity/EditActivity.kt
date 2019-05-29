@@ -58,12 +58,22 @@ class EditActivity : BaseActivity() {
         initView()
         editConfirmFab.setOnClickListener(this)
         editPreviewFab.setOnClickListener(this)
+        handleIntent(intent)
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         this.intent = intent
         loadImage()
+        handleIntent(intent)
+    }
+
+    private fun handleIntent(intent: Intent?) {
+        intent ?: return
+        val id = intent.getIntExtra(NotificationUtils.EXTRA_NOTIFICATION_ID, Int.MIN_VALUE)
+        if (id != Int.MIN_VALUE) {
+            NotificationUtils.cancelNotification(id)
+        }
     }
 
     override fun onResume() {

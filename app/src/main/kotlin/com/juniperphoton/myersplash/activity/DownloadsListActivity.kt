@@ -15,6 +15,7 @@ import com.juniperphoton.myersplash.adapter.DownloadsListAdapter
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.service.DownloadService
 import com.juniperphoton.myersplash.utils.AnalysisHelper
+import com.juniperphoton.myersplash.utils.NotificationUtils
 import com.juniperphoton.myersplash.utils.Params
 import com.juniperphoton.myersplash.utils.Pasteur
 import com.juniperphoton.myersplash.viewmodel.DownloadListViewModel
@@ -57,6 +58,21 @@ class DownloadsListActivity : BaseActivity(), DownloadsListAdapter.Callback, Cor
         Looper.myQueue().addIdleHandler {
             initViews()
             false
+        }
+
+        handleIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        handleIntent(intent)
+    }
+
+    private fun handleIntent(intent: Intent?) {
+        intent ?: return
+        val id = intent.getIntExtra(NotificationUtils.EXTRA_NOTIFICATION_ID, Int.MIN_VALUE)
+        if (id != Int.MIN_VALUE) {
+            NotificationUtils.cancelNotification(id)
         }
     }
 
