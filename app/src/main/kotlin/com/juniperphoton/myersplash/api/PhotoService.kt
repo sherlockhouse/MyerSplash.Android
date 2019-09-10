@@ -14,6 +14,7 @@ interface PhotoService {
                        @Query("page") page: Int,
                        @Query("per_page") per_page: Int): Deferred<MutableList<UnsplashImage>>
 
+    @Deprecated("")
     @GET
     fun getFeaturedPhotosAsync(@Url url: String,
                                @Query("page") page: Int,

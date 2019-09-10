@@ -80,8 +80,8 @@ open class MainListPresenter : MainContract.MainPresenter, CoroutineScope by Mai
             val list = when (category.id) {
                 UnsplashCategory.NEW_CATEGORY_ID ->
                     CloudService.getPhotos(category.requestUrl!!, next)
-                UnsplashCategory.FEATURED_CATEGORY_ID ->
-                    CloudService.getFeaturedPhotos(category.requestUrl!!, next)
+                UnsplashCategory.DEVELOP_ID ->
+                    CloudService.getDeveloperPhotos(category.requestUrl!!, next)
                 UnsplashCategory.HIGHLIGHTS_CATEGORY_ID ->
                     CloudService.getHighlightsPhotos(next)
                 UnsplashCategory.SEARCH_ID ->

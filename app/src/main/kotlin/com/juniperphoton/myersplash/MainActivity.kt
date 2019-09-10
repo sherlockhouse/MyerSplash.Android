@@ -42,7 +42,7 @@ class MainActivity : BaseActivity() {
 
         private val ID_MAPS = mutableMapOf(
                 0 to UnsplashCategory.NEW_CATEGORY_ID,
-                1 to UnsplashCategory.FEATURED_CATEGORY_ID,
+                1 to UnsplashCategory.DEVELOP_ID,
                 2 to UnsplashCategory.HIGHLIGHTS_CATEGORY_ID)
     }
 

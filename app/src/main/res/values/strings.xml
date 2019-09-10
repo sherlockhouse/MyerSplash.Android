@@ -113,7 +113,7 @@
     <string name="recommended_tag">TODAY</string>
     <string name="copied_tag">COPIED</string>
     <string name="pivot_new">NEW</string>
-    <string name="pivot_featured">FEATURED</string>
+    <string name="pivot_developer">DEVELOPER</string>
     <string name="pivot_highlights">HIGHLIGHTS</string>
 
     <string name="delete_downloading">Delete downloading items</string>

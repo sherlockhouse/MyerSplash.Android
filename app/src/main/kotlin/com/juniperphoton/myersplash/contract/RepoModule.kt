@@ -13,7 +13,7 @@ class RepoModule(private val context: Context,
     fun providesCategory(): UnsplashCategory {
         return when (categoryId) {
             UnsplashCategory.NEW_CATEGORY_ID -> UnsplashCategory.newCategory
-            UnsplashCategory.FEATURED_CATEGORY_ID -> UnsplashCategory.featuredCategory
+            UnsplashCategory.DEVELOP_ID -> UnsplashCategory.developCategory
             UnsplashCategory.HIGHLIGHTS_CATEGORY_ID -> UnsplashCategory.highlightCategory
             UnsplashCategory.RANDOM_CATEGORY_ID -> UnsplashCategory.randomCategory
             else -> UnsplashCategory.searchCategory

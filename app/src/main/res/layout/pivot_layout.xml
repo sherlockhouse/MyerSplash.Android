@@ -26,7 +26,7 @@
             android:id="@+id/pivot_item_1"
             style="@style/PivotItem"
             android:alpha="0.3"
-            android:text="@string/pivot_featured"/>
+            android:text="@string/pivot_developer"/>
 
         <TextView
             android:id="@+id/pivot_item_2"

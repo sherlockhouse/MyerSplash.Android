@@ -78,8 +78,8 @@
     <string name="end">到达世界的尽头了</string>
     <string name="recommended_tag">今日推荐</string>
     <string name="copied_tag">成功复制了</string>
-    <string name="pivot_new">最新</string>
-    <string name="pivot_featured">精选</string>
+    <string name="pivot_new">编辑推荐</string>
+    <string name="pivot_developer">开发者</string>
     <string name="pivot_highlights">每日推荐</string>
     <string name="delete_downloading">删除正在下载的内容</string>
     <string name="delete_downloaded">删除下载完成的内容</string>

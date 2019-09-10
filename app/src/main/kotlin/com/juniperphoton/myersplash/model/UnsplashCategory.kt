@@ -6,20 +6,20 @@ import com.juniperphoton.myersplash.api.Request
 class UnsplashCategory {
     companion object {
         const val NEW_CATEGORY_ID = 10000
-        const val FEATURED_CATEGORY_ID = 10001
+        const val DEVELOP_ID = 10001
         const val HIGHLIGHTS_CATEGORY_ID = 10002
         const val SEARCH_ID = 10003
         const val RANDOM_CATEGORY_ID = 10004
 
-        private const val FEATURE = "Featured"
+        private const val DEVELOP = "DEVELOP"
         private const val NEW = "New"
         private const val HIGHLIGHTS = "Highlights"
 
-        val featuredCategory: UnsplashCategory
+        val developCategory: UnsplashCategory
             get() {
                 return UnsplashCategory().apply {
-                    id = FEATURED_CATEGORY_ID
-                    title = FEATURE
+                    id = DEVELOP_ID
+                    title = DEVELOP
                 }
             }
 
@@ -63,7 +63,7 @@ class UnsplashCategory {
     val requestUrl: String?
         get() = when (id) {
             NEW_CATEGORY_ID -> Request.PHOTO_URL
-            FEATURED_CATEGORY_ID -> Request.FEATURED_PHOTO_URL
+            DEVELOP_ID -> Request.DEVELOPER_PHOTO_URL
             HIGHLIGHTS_CATEGORY_ID -> Request.HIGHLIGHTS_PHOTO_URL
             RANDOM_CATEGORY_ID -> Request.RANDOM_PHOTOS_URL
             SEARCH_ID -> Request.SEARCH_URL

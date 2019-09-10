@@ -87,13 +87,10 @@ object CloudService {
         return list
     }
 
-    suspend fun getFeaturedPhotos(url: String,
-                                  page: Int): MutableList<UnsplashImage> {
-        val mutableList = mutableListOf<UnsplashImage>()
+    suspend fun getDeveloperPhotos(url: String,
+                                   page: Int): MutableList<UnsplashImage> {
         return photoService
-                .getFeaturedPhotosAsync(url, page, DEFAULT_REQUEST_COUNT).await().mapTo(mutableList) {
-                    it.image!!
-                }
+                .getPhotosAsync(url, page, DEFAULT_REQUEST_COUNT).await()
     }
 
     suspend fun getHighlightsPhotos(page: Int): MutableList<UnsplashImage> {
