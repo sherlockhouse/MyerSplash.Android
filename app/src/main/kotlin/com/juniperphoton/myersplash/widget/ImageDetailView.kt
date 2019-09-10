@@ -435,7 +435,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
         if (color != Int.MIN_VALUE) {
             updateThemeColor(color)
         } else {
-            updateThemeColor(Color.BLACK)
+            updateThemeColor(ContextCompat.getColor(context, R.color.primaryBackgroundColor))
         }
     }
 

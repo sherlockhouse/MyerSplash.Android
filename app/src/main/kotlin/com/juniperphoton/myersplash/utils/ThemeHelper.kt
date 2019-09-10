@@ -17,4 +17,8 @@ object ThemeHelper {
             else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
         })
     }
+
+    fun isDark(): Boolean {
+        return AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
+    }
 }
