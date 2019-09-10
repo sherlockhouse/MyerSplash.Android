@@ -10,6 +10,10 @@
     <string name="settings_quick_download_title">快速下载</string>
     <string name="settings_download_metered">开启后会在下载前提醒你</string>
     <string name="settings_download_metered_title">在使用按流量计费的网络下提示</string>
+    <string name="settings_theme_dark">暗色</string>
+    <string name="settings_theme_light">亮色</string>
+    <string name="settings_theme_system">跟随系统</string>
+    <string name="settings_theme">主题</string>
     <string name="image_desc">图片</string>
     <string name="settings_saving_highest">原图</string>
     <string name="settings_saving_high">高（默认）</string>

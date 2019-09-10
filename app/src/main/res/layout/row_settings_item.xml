@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="80dp">
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
         android:id="@+id/quick_download_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?android:attr/selectableItemBackground"
+        android:background="@drawable/ripple_rect"
         android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
         <LinearLayout
@@ -20,23 +21,24 @@
                 android:id="@+id/settings_item_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/settings_margin_up_and_down"
                 android:layout_marginStart="@dimen/settings_margin_left"
+                tools:text="title"
                 android:layout_marginTop="@dimen/settings_margin_up_and_down"
-                android:textColor="@android:color/white"
-                android:textSize="17sp"/>
+                android:layout_marginBottom="@dimen/settings_margin_up_and_down"
+                android:textColor="@color/primaryTextColor"
+                android:textSize="17sp" />
 
             <TextView
                 android:id="@+id/settings_item_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/settings_margin_up_and_down"
                 android:layout_marginStart="@dimen/settings_margin_left"
+                android:layout_marginBottom="@dimen/settings_margin_up_and_down"
                 android:alpha="0.5"
+                tools:text="content"
                 android:paddingEnd="@dimen/settings_margin_left"
-                android:textColor="@android:color/white"
-                android:textSize="14sp"
-                />
+                android:textColor="@color/primaryTextColor"
+                android:textSize="14sp" />
         </LinearLayout>
 
         <androidx.appcompat.widget.SwitchCompat
@@ -49,7 +51,7 @@
             android:checked="true"
             android:foregroundTint="@color/MyerSplashThemeColor"
             android:theme="@style/AppTheme"
-            android:thumbTint="@color/MyerSplashThemeColor"/>
+            android:thumbTint="@color/MyerSplashThemeColor" />
 
     </LinearLayout>
 
@@ -58,6 +60,5 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/grey_line"
-        />
+        android:background="@drawable/grey_line" />
 </RelativeLayout>

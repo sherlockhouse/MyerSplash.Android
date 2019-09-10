@@ -46,6 +46,9 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : ConstraintLayout(c
     @BindView(R.id.row_photo_today_tag)
     lateinit var todayTag: View
 
+    @BindView(R.id.row_photo_placeholder)
+    lateinit var placeholder: View
+
     var onClickPhoto: OnClickPhotoListener? = null
     var onClickQuickDownload: OnClickQuickDownloadListener? = null
     var onBind: OnBindListener? = null

@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="#000000"
+            android:background="@color/primaryBackgroundColor"
             android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
             <androidx.legacy.widget.Space
@@ -50,7 +50,7 @@
                     android:fontFamily="sans-serif-light"
                     android:gravity="center"
                     android:text="@string/myer"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/primaryTextColor"
                     android:textSize="40sp"/>
 
                 <TextView
@@ -59,7 +59,7 @@
                     android:fontFamily="sans-serif-bold"
                     android:gravity="center"
                     android:text="@string/splash"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/primaryTextColor"
                     android:textSize="40sp"
                     android:textStyle="bold"/>
             </LinearLayout>
@@ -72,7 +72,7 @@
                 android:layout_marginTop="12dp"
                 android:fontFamily="sans-serif-light"
                 android:text="@string/for_windows_amp_android"
-                android:textColor="@android:color/white"
+                android:textColor="@color/primaryTextColor"
                 android:textSize="12sp"
                 android:textStyle="normal"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -89,7 +89,7 @@
                 android:paddingTop="4dp"
                 android:paddingRight="8dp"
                 android:paddingBottom="4dp"
-                android:textColor="@android:color/white"
+                android:textColor="@color/primaryBackgroundColor"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -136,17 +136,20 @@
                         android:id="@+id/emailItem"
                         style="@style/AboutContactItem"
                         android:contentDescription="@string/image_desc"
+                        android:tint="@color/primaryTextColor"
                         android:src="@drawable/ic_email"/>
 
                     <ImageView
                         android:id="@+id/githubItem"
                         style="@style/AboutContactItem"
                         android:contentDescription="@string/image_desc"
+                        android:tint="@color/primaryTextColor"
                         android:src="@drawable/ic_github_icon"/>
 
                     <ImageView
                         android:id="@+id/twitterItem"
                         style="@style/AboutContactItem"
+                        android:tint="@color/primaryTextColor"
                         android:contentDescription="@string/image_desc"
                         android:scaleType="centerCrop"
                         android:src="@drawable/ic_twitter"/>
@@ -155,6 +158,7 @@
                         android:id="@+id/weiboItem"
                         style="@style/AboutContactItem"
                         android:contentDescription="@string/image_desc"
+                        android:tint="@color/primaryTextColor"
                         android:src="@drawable/ic_weibo_social_logo"/>
                 </LinearLayout>
 
@@ -178,16 +182,4 @@
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/gradient_top_height"
-        android:background="@drawable/gradient_background"/>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/gradient_bottom_height"
-        android:layout_gravity="bottom"
-        android:background="@drawable/gradient_background"
-        android:rotation="180"/>
 </FrameLayout>

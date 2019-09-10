@@ -94,13 +94,12 @@ class DownloadsListActivity : BaseActivity(), DownloadsListAdapter.Callback, Cor
                                 deleteOptionsMap[i] ?: DownloadItem.DOWNLOAD_STATUS_INVALID)
                     }
                 }
-                .setPositiveButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
                 .create()
                 .show()
     }
 
     private fun updateNoItemVisibility() {
-        noItemView.visibility = if (adapter.data.isEmpty()) View.GONE else View.VISIBLE
+        noItemView.visibility = if (adapter.data.isEmpty()) View.VISIBLE else View.GONE
     }
 
     private val spanCount: Int
@@ -133,6 +132,7 @@ class DownloadsListActivity : BaseActivity(), DownloadsListAdapter.Callback, Cor
                 .subscribe { items ->
                     Pasteur.info(TAG, "refresh items: ${items.size}")
                     adapter.refresh(items)
+                    updateNoItemVisibility()
                 }
     }
 

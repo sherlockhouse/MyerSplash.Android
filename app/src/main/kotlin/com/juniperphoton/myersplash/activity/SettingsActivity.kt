@@ -10,6 +10,7 @@ import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.db.AppDatabase
 import com.juniperphoton.myersplash.event.RefreshUIEvent
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
+import com.juniperphoton.myersplash.utils.ThemeHelper.switchTheme
 import com.juniperphoton.myersplash.utils.Toaster
 import kotlinx.android.synthetic.main.activity_settings.*
 import kotlinx.coroutines.*
@@ -20,12 +21,14 @@ class SettingsActivity : BaseActivity(), View.OnClickListener, CoroutineScope by
     companion object {
         private const val TAG = "SettingsActivity"
 
+        private val KEY_THEME = App.instance.getString(R.string.preference_key_theme)
         private val KEY_SAVING_QUALITY = App.instance.getString(R.string.preference_key_saving_quality)
         private val KEY_LIST_QUALITY = App.instance.getString(R.string.preference_key_list_quality)
     }
 
     private lateinit var savingStrings: Array<String>
     private lateinit var loadingStrings: Array<String>
+    private lateinit var themeStrings: Array<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +37,11 @@ class SettingsActivity : BaseActivity(), View.OnClickListener, CoroutineScope by
         quickDownloadSettings.onCheckedChanged = {
             EventBus.getDefault().post(RefreshUIEvent())
         }
+
+        themeStrings = arrayOf(
+                getString(R.string.settings_theme_dark),
+                getString(R.string.settings_theme_light),
+                getString(R.string.settings_theme_system))
 
         savingStrings = arrayOf(
                 getString(R.string.settings_saving_highest),
@@ -51,10 +59,14 @@ class SettingsActivity : BaseActivity(), View.OnClickListener, CoroutineScope by
         val loadingChoice = LocalSettingHelper.getInt(this, KEY_LIST_QUALITY, 0)
         loadingQualitySettings.content = loadingStrings[loadingChoice]
 
+        val theme = LocalSettingHelper.getInt(this, KEY_THEME, 2)
+        themeSettings.content = themeStrings[theme]
+
         clearCacheSettings.setOnClickListener(this)
         settingClearDatabase.setOnClickListener(this)
         savingQualitySettings.setOnClickListener(this)
         loadingQualitySettings.setOnClickListener(this)
+        themeSettings.setOnClickListener(this)
     }
 
     override fun onClick(v: View) = runBlocking {
@@ -71,6 +83,23 @@ class SettingsActivity : BaseActivity(), View.OnClickListener, CoroutineScope by
             R.id.loadingQualitySettings -> {
                 setLoadingQuality()
             }
+            R.id.themeSettings -> {
+                setTheme()
+            }
+        }
+    }
+
+    private fun setTheme() {
+        val choice = LocalSettingHelper.getInt(this, KEY_THEME, 2)
+        AlertDialog.Builder(this@SettingsActivity).apply {
+            setTitle(getString(R.string.settings_theme))
+            setSingleChoiceItems(themeStrings, choice) { dialog, which ->
+                LocalSettingHelper.putInt(this@SettingsActivity, KEY_THEME, which)
+                dialog.dismiss()
+                themeSettings.content = themeStrings[which]
+                switchTheme(this@SettingsActivity)
+            }
+            show()
         }
     }
 

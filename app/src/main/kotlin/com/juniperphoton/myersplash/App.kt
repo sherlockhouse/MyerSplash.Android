@@ -5,6 +5,7 @@ import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.imagepipeline.backends.okhttp3.OkHttpImagePipelineConfigFactory
 import com.juniperphoton.myersplash.api.OkHttpClientAPI
 import com.juniperphoton.myersplash.utils.Pasteur
+import com.juniperphoton.myersplash.utils.ThemeHelper
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
 import com.microsoft.appcenter.crashes.Crashes
@@ -16,6 +17,8 @@ class App : Application() {
     }
 
     override fun onCreate() {
+        ThemeHelper.switchTheme(this)
+
         super.onCreate()
         instance = this
         Pasteur.init(BuildConfig.DEBUG)
