@@ -56,6 +56,8 @@ android {
                     "APP_NAME": "MyerSplash"
             ]
             signingConfig signingConfigs.release
+            shrinkResources false
+            minifyEnabled false
         }
     }
 

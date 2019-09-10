@@ -9,13 +9,16 @@ import com.juniperphoton.myersplash.R
  * @since 2019-09-10
  */
 object ThemeHelper {
-    fun switchTheme(context: Context) {
-        val theme = LocalSettingHelper.getInt(context, context.getString(R.string.preference_key_theme), 2)
-        AppCompatDelegate.setDefaultNightMode(when (theme) {
+    fun currentTheme(context: Context): Int {
+        return when (LocalSettingHelper.getInt(context, context.getString(R.string.preference_key_theme), 2)) {
             0 -> AppCompatDelegate.MODE_NIGHT_YES
             1 -> AppCompatDelegate.MODE_NIGHT_NO
             else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-        })
+        }
+    }
+
+    fun switchTheme(context: Context) {
+        AppCompatDelegate.setDefaultNightMode(currentTheme(context))
     }
 
     fun isDark(): Boolean {
