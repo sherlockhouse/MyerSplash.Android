@@ -7,14 +7,11 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
-import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.getStatusBarHeight
 import com.juniperphoton.myersplash.extension.updateDimensions
 import com.juniperphoton.myersplash.utils.Pasteur
-import com.juniperphoton.myersplash.utils.ThemeHelper
 
 abstract class BaseActivity : AppCompatActivity(), View.OnApplyWindowInsetsListener, View.OnClickListener {
     companion object {
@@ -28,7 +25,8 @@ abstract class BaseActivity : AppCompatActivity(), View.OnApplyWindowInsetsListe
 
         window.statusBarColor = Color.TRANSPARENT
 
-        updateStatusBar(!ThemeHelper.isDark())
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        updateStatusBar(currentNightMode == Configuration.UI_MODE_NIGHT_NO)
     }
 
     private fun updateStatusBar(darkText: Boolean) {
