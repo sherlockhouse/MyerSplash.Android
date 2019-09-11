@@ -162,7 +162,7 @@ class MainActivity : BaseActivity() {
             }
             onHidden = {
                 searchFab.show()
-                if (toolbarLayout.height - Math.abs(toolbarLayout.top) < 0.01) {
+                if (toolbarLayout.height - abs(toolbarLayout.top) < 0.01) {
                     tagView.animate().alpha(1f).setDuration(300).start()
                 }
             }
@@ -222,6 +222,9 @@ class MainActivity : BaseActivity() {
 
         toolbarLayout.addOnOffsetChangedListener(
                 AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+                    if (searchView.visibility == View.VISIBLE) {
+                        return@OnOffsetChangedListener
+                    }
                     if (abs(verticalOffset) - appBarLayout.height == 0) {
                         //todo extract duration
                         tagView.animate().alpha(1f).setDuration(300).start()
@@ -243,7 +246,7 @@ class MainActivity : BaseActivity() {
 
     override fun onApplySystemInsets(top: Int, bottom: Int) {
         val params = searchFab.layoutParams as ViewGroup.MarginLayoutParams
-        params.bottomMargin += bottom
+        params.bottomMargin = bottom + resources.getDimensionPixelSize(R.dimen.fab_margin)
         searchFab.layoutParams = params
     }
 
