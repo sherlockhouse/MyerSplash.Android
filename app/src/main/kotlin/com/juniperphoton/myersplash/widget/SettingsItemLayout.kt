@@ -65,7 +65,9 @@ class SettingsItemLayout(context: Context, attrs: AttributeSet) : FrameLayout(co
 
         preferenceKey?.let {
             val value = LocalSettingHelper.getBoolean(context, it, defaultValue)
-            this.checked = value
+            post {
+                this.checked = value
+            }
         }
 
         if (title != null) {
