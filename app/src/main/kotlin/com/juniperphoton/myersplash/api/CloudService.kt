@@ -123,11 +123,11 @@ object CloudService {
 
     suspend fun downloadPhoto(url: String): ResponseBody {
         return withTimeout(DOWNLOAD_TIMEOUT_MS) {
-            ioService.downloadFileAsync(url).await()
+            ioService.downloadFileAsync(url)
         }
     }
 
     suspend fun reportDownload(url: String): ResponseBody {
-        return ioService.reportDownloadAsync(url).await()
+        return ioService.reportDownloadAsync(url)
     }
 }

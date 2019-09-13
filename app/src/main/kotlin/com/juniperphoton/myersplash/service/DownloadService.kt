@@ -14,9 +14,8 @@ import com.juniperphoton.myersplash.extension.writeToFile
 import com.juniperphoton.myersplash.utils.*
 import kotlinx.coroutines.*
 import java.io.File
-import java.util.*
 
-class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.IO) {
+class DownloadService : Service(), CoroutineScope by MainScope() {
     companion object {
         private const val TAG = "DownloadService"
     }
@@ -24,19 +23,20 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
     override fun onBind(intent: Intent?): IBinder? = null
 
     // A map storing download url to downloading disposable object
-    private val downloadUrlToJobMap = HashMap<String, Job>()
+    private val downloadUrlToJobMap = mutableMapOf<String, Job>()
 
     private val dao = AppDatabase.instance.downloadItemDao()
 
     @SuppressLint("CheckResult")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Pasteur.info(TAG, "on start command")
+        Pasteur.info(TAG, "on start command $intent")
         intent?.let {
+            // launch in main thread
             launch {
                 onHandleIntent(it)
             }
         }
-        return START_STICKY
+        return START_NOT_STICKY
     }
 
     override fun onDestroy() {
@@ -52,7 +52,9 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
 
     private suspend fun onHandleIntent(intent: Intent) {
         if (intent.getBooleanExtra(Params.CHECK_STATUS, false)) {
-            checkStatus()
+            withContext(Dispatchers.IO) {
+                checkStatus()
+            }
             if (downloadUrlToJobMap.isEmpty()) {
                 Pasteur.w(TAG, "about to stop self")
                 stopSelf()
@@ -60,11 +62,19 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
             return
         }
 
+        Pasteur.info(TAG, "onHandleIntent")
+
         val cancelJob = intent.getBooleanExtra(Params.CANCELED_KEY, false)
         val downloadUrl = intent.getStringExtra(Params.URL_KEY)
         val fileName = intent.getStringExtra(Params.NAME_KEY)
         val previewUrl = intent.getStringExtra(Params.PREVIEW_URI)
         val isUnsplash = intent.getBooleanExtra(Params.IS_UNSPLASH_WALLPAPER, true)
+        val fromRetry = intent.getIntExtra(Params.RETRY_KEY, 0)
+
+        if (fromRetry != 0) {
+            NotificationUtils.cancelNotification(fromRetry)
+        }
+
         if (!isUnsplash) {
             Toaster.sendShortToast(R.string.downloading)
         }
@@ -76,7 +86,7 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
         if (cancelJob) {
             cancelJob(downloadUrl)
         } else {
-            Pasteur.d(TAG, "on handle intent progress")
+            Pasteur.d(TAG, "on handle intent progress: $downloadUrl")
             downloadImage(downloadUrl, fileName, previewUri, isUnsplash)
         }
     }
@@ -96,14 +106,22 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
                               previewUri: Uri?, isUnsplash: Boolean) {
         val job = launch(context = CoroutineExceptionHandler { _, e ->
             Pasteur.e(TAG, "CoroutineExceptionHandler error $e, url $url")
-            onError(url, fileName, null, true)
         }) {
+            Pasteur.info(TAG, "on start downloading")
             try {
+                withContext(Dispatchers.IO) {
+                    dao.setProgress(url, 0)
+                }
+
                 val file = DownloadUtils.getFileToSave(fileName)
                 val responseBody = CloudService.downloadPhoto(url)
 
                 Pasteur.d(TAG, "outputFile download onNext, " +
                         "size=${responseBody.contentLength()}")
+
+                withContext(Dispatchers.IO) {
+                    dao.setProgress(url, 1)
+                }
 
                 responseBody.writeToFile(file!!.path) { p ->
                     Pasteur.i(TAG, "dao setting progress: $p")
@@ -116,12 +134,15 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
                 // thus we handle it here.
                 Pasteur.e(TAG, "CancellationException error $e, url $url")
                 onError(url, fileName, null, false)
+            } catch (e: Exception) {
+                Pasteur.e(TAG, "other error $e, url $url")
+                onError(url, fileName, null, true)
             }
         }
         downloadUrlToJobMap[url] = job
     }
 
-    private fun onSuccess(url: String, file: File, previewUri: Uri?, isUnsplash: Boolean) {
+    private suspend fun onSuccess(url: String, file: File, previewUri: Uri?, isUnsplash: Boolean) {
         Pasteur.d(TAG, "output file:" + file.absolutePath)
 
         val newFile = File("${file.path.replace(" ", "")}.jpg")
@@ -130,16 +151,21 @@ class DownloadService : Service(), CoroutineScope by CoroutineScope(Dispatchers.
         Pasteur.d(TAG, "renamed file:" + newFile.absolutePath)
         newFile.notifyFileUpdated(App.instance)
 
-        dao.setSuccess(url, newFile.path)
+        withContext(Dispatchers.IO) {
+            dao.setSuccess(url, newFile.path)
+        }
 
         NotificationUtils.showCompleteNotification(Uri.parse(url), previewUri,
                 if (isUnsplash) null else newFile.absolutePath)
     }
 
-    private fun onError(url: String, fileName: String, previewUri: Uri?, showNotification: Boolean) {
+    private suspend fun onError(url: String, fileName: String, previewUri: Uri?, showNotification: Boolean) {
         if (showNotification) {
             NotificationUtils.showErrorNotification(Uri.parse(url), fileName, url, previewUri)
         }
-        dao.setFailed(url)
+
+        withContext(Dispatchers.IO) {
+            dao.setFailed(url)
+        }
     }
 }

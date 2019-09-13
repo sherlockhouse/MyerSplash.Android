@@ -66,7 +66,10 @@ class MainActivity : BaseActivity() {
 
         initShortcuts()
         initMainViews()
-        startServiceToCheck()
+
+        if (savedInstanceState == null) {
+            startServiceToCheck()
+        }
     }
 
     private fun startServiceToCheck() {
