@@ -51,7 +51,7 @@ class ImageDetailViewModel(app: Application) : AndroidViewModel(app), CoroutineS
     fun copyUrlToClipboard() {
         val clipboard = app.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText(app.getString(R.string.app_name), unsplashImage?.downloadUrl)
-        clipboard.primaryClip = clip
+        clipboard.setPrimaryClip(clip)
     }
 
     fun share() {

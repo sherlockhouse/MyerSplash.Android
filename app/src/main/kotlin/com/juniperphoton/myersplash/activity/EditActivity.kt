@@ -209,11 +209,13 @@ class EditActivity : BaseActivity() {
     @SuppressLint("WrongThread")
     @WorkerThread
     private fun composeMaskInternal(): File? {
+        fileUri ?: return null
+
         val opt = BitmapFactory.Options()
         opt.inJustDecodeBounds = true
 
         // First decode bounds to get width and height
-        val inputStream = contentResolver.openInputStream(fileUri)
+        val inputStream = contentResolver.openInputStream(fileUri!!)
         inputStream.use {
             BitmapFactory.decodeStream(inputStream, null, opt)
         }

@@ -18,12 +18,12 @@ android {
         }
     }
 
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    compileSdkVersion 29
+    buildToolsVersion '29.0.2'
     defaultConfig {
         applicationId "com.juniperphoton.myersplash"
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 500
         versionName "3.9.9.1"
 
@@ -106,10 +106,8 @@ dependencies {
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'org.greenrobot:eventbus:3.0.0'
-    implementation 'com.google.android:flexbox:1.1.0'
+    implementation 'com.google.android:flexbox:1.1.1'
     implementation 'com.juniperphoton:flipperlayout:1.3.0'
-
-    implementation 'com.google.android.material:material:1.1.0-alpha10'
 
     implementation 'com.google.dagger:dagger:2.15'
     kapt 'com.google.dagger:dagger-compiler:2.15'
@@ -118,7 +116,7 @@ dependencies {
     implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
     implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
 
-    def room_version = "2.2.0-rc01"
+    def room_version = "2.2.0"
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 
