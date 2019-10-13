@@ -63,7 +63,7 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
      */
     val selectedString: String
         get() = when (selectedItem) {
-            1 -> context.getString(R.string.pivot_featured).toUpperCase()
+            1 -> context.getString(R.string.pivot_developer).toUpperCase()
             2 -> context.getString(R.string.pivot_highlights).toUpperCase()
             else -> context.getString(R.string.pivot_new).toUpperCase()
         }

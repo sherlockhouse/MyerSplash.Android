@@ -15,11 +15,17 @@
     <string name="settings_download_metered">Enable this will warn you before starting download</string>
     <string name="settings_download_metered_title">Metered network warning</string>
 
+    <string name="settings_theme">Theme</string>
+
     <string name="image_desc">Desc</string>
 
     <string name="settings_saving_highest">Raw</string>
     <string name="settings_saving_high">High (Default)</string>
     <string name="settings_saving_medium">Medium (Not recommended)</string>
+
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_system">Follow System</string>
 
     <string name="settings_loading_large">Large (Recommended)</string>
     <string name="settings_loading_small">Small</string>
@@ -107,7 +113,7 @@
     <string name="recommended_tag">TODAY</string>
     <string name="copied_tag">COPIED</string>
     <string name="pivot_new">NEW</string>
-    <string name="pivot_featured">FEATURED</string>
+    <string name="pivot_developer">DEVELOPER</string>
     <string name="pivot_highlights">HIGHLIGHTS</string>
 
     <string name="delete_downloading">Delete downloading items</string>

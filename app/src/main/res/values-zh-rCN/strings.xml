@@ -10,6 +10,10 @@
     <string name="settings_quick_download_title">快速下载</string>
     <string name="settings_download_metered">开启后会在下载前提醒你</string>
     <string name="settings_download_metered_title">在使用按流量计费的网络下提示</string>
+    <string name="settings_theme_dark">暗色</string>
+    <string name="settings_theme_light">亮色</string>
+    <string name="settings_theme_system">跟随系统</string>
+    <string name="settings_theme">主题</string>
     <string name="image_desc">图片</string>
     <string name="settings_saving_highest">原图</string>
     <string name="settings_saving_high">高（默认）</string>
@@ -74,8 +78,8 @@
     <string name="end">到达世界的尽头了</string>
     <string name="recommended_tag">今日推荐</string>
     <string name="copied_tag">成功复制了</string>
-    <string name="pivot_new">最新</string>
-    <string name="pivot_featured">精选</string>
+    <string name="pivot_new">编辑推荐</string>
+    <string name="pivot_developer">开发者</string>
     <string name="pivot_highlights">每日推荐</string>
     <string name="delete_downloading">删除正在下载的内容</string>
     <string name="delete_downloaded">删除下载完成的内容</string>

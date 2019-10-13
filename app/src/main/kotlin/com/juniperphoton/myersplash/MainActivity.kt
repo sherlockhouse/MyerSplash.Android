@@ -29,6 +29,8 @@ import com.juniperphoton.myersplash.utils.PermissionUtils
 import com.juniperphoton.myersplash.widget.PivotTitleBar
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
+import kotlin.math.abs
+import kotlin.math.sqrt
 
 class MainActivity : BaseActivity() {
     companion object {
@@ -40,7 +42,7 @@ class MainActivity : BaseActivity() {
 
         private val ID_MAPS = mutableMapOf(
                 0 to UnsplashCategory.NEW_CATEGORY_ID,
-                1 to UnsplashCategory.FEATURED_CATEGORY_ID,
+                1 to UnsplashCategory.DEVELOP_ID,
                 2 to UnsplashCategory.HIGHLIGHTS_CATEGORY_ID)
     }
 
@@ -64,7 +66,10 @@ class MainActivity : BaseActivity() {
 
         initShortcuts()
         initMainViews()
-        startServiceToCheck()
+
+        if (savedInstanceState == null) {
+            startServiceToCheck()
+        }
     }
 
     private fun startServiceToCheck() {
@@ -125,7 +130,7 @@ class MainActivity : BaseActivity() {
         val width = window.decorView.width
         val height = window.decorView.height
 
-        val radius = Math.sqrt(width.pow() + height.pow()).toInt()
+        val radius = sqrt(width.pow() + height.pow()).toInt()
         val animator = ViewAnimationUtils.createCircularReveal(searchView,
                 fabPositionX, fabPositionY,
                 (if (show) 0 else radius).toFloat(), (if (show) radius else 0).toFloat())
@@ -160,7 +165,7 @@ class MainActivity : BaseActivity() {
             }
             onHidden = {
                 searchFab.show()
-                if (toolbarLayout.height - Math.abs(toolbarLayout.top) < 0.01) {
+                if (toolbarLayout.height - abs(toolbarLayout.top) < 0.01) {
                     tagView.animate().alpha(1f).setDuration(300).start()
                 }
             }
@@ -220,14 +225,19 @@ class MainActivity : BaseActivity() {
 
         toolbarLayout.addOnOffsetChangedListener(
                 AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
-                    if (Math.abs(verticalOffset) - appBarLayout.height == 0) {
+                    if (searchView.visibility == View.VISIBLE) {
+                        return@OnOffsetChangedListener
+                    }
+                    if (abs(verticalOffset) - appBarLayout.height == 0) {
                         //todo extract duration
                         tagView.animate().alpha(1f).setDuration(300).start()
-                        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE
+                        val currentFlag = window.decorView.systemUiVisibility
+                        window.decorView.systemUiVisibility = currentFlag or View.SYSTEM_UI_FLAG_LOW_PROFILE
                         searchFab.hide()
                     } else {
                         tagView.animate().alpha(0f).setDuration(100).start()
-                        window.decorView.systemUiVisibility = 0
+                        val currentFlag = window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LOW_PROFILE.inv()
+                        window.decorView.systemUiVisibility = currentFlag
                         searchFab.show()
                     }
                 })
@@ -239,7 +249,7 @@ class MainActivity : BaseActivity() {
 
     override fun onApplySystemInsets(top: Int, bottom: Int) {
         val params = searchFab.layoutParams as ViewGroup.MarginLayoutParams
-        params.bottomMargin += bottom
+        params.bottomMargin = bottom + resources.getDimensionPixelSize(R.dimen.fab_margin)
         searchFab.layoutParams = params
     }
 

@@ -1,13 +1,12 @@
 package com.juniperphoton.myersplash.activity
 
-import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
-import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.getStatusBarHeight
@@ -24,17 +23,23 @@ abstract class BaseActivity : AppCompatActivity(), View.OnApplyWindowInsetsListe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.P) {
-            val enter = resources.getIdentifier("android:activity_open_enter", "anim", null)
-            val exit = resources.getIdentifier("android:activity_open_exit", "anim", null)
-            if (enter != 0 && exit != 0) {
-                overridePendingTransition(enter, exit)
-            }
-        }
-
         window.statusBarColor = Color.TRANSPARENT
-        window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        updateStatusBar(currentNightMode == Configuration.UI_MODE_NIGHT_NO)
+    }
+
+    private fun updateStatusBar(darkText: Boolean) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val decorView = window.decorView
+            var prev = decorView.systemUiVisibility
+            prev = if (darkText) {
+                prev or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            } else {
+                prev and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+            }
+            decorView.systemUiVisibility = prev
+        }
     }
 
     override fun finish() {
@@ -42,17 +47,6 @@ abstract class BaseActivity : AppCompatActivity(), View.OnApplyWindowInsetsListe
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.P) {
             val enter = resources.getIdentifier("android:activity_close_enter", "anim", null)
             val exit = resources.getIdentifier("android:activity_close_exit", "anim", null)
-            if (enter != 0 && exit != 0) {
-                overridePendingTransition(enter, exit)
-            }
-        }
-    }
-
-    override fun startActivityForResult(intent: Intent?, requestCode: Int, options: Bundle?) {
-        super.startActivityForResult(intent, requestCode, options)
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.P) {
-            val enter = resources.getIdentifier("android:activity_open_enter", "anim", null)
-            val exit = resources.getIdentifier("android:activity_open_exit", "anim", null)
             if (enter != 0 && exit != 0) {
                 overridePendingTransition(enter, exit)
             }

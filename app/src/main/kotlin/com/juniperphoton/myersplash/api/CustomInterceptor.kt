@@ -23,11 +23,6 @@ class CustomInterceptor : Interceptor {
 
         builder.url(ub.build().toString())
 
-        val resp = chain.proceed(builder.build())
-        if (!resp.isSuccessful) {
-            throw APIException(resp.code(), request.url().toString())
-        }
-
-        return resp
+        return chain.proceed(builder.build())
     }
 }

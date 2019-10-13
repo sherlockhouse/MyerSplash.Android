@@ -35,7 +35,7 @@ abstract class DownloadItemDao {
     @Query("UPDATE download_item SET status=${DownloadItem.DOWNLOAD_STATUS_FAILED}, file_path=null, progress=0 WHERE download_url=:url")
     abstract fun setFailed(url: String?)
 
-    @Query("UPDATE download_item SET progress=:progress WHERE download_url=:url")
+    @Query("UPDATE download_item SET progress=:progress, status=${DownloadItem.DOWNLOAD_STATUS_DOWNLOADING} WHERE download_url=:url")
     abstract fun setProgress(url: String, progress: Int)
 
     @Query("DELETE FROM download_item WHERE id=:id")

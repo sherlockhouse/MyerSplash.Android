@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="primaryBackgroundColor">#FFFFFF</color>
+    <color name="primaryHalfBackgroundColor">#C4FFFFFF</color>
+    <color name="primaryTextColor">#161616</color>
+    <color name="primaryRevTextColor">#FFFFFF</color>
+    <color name="rippleColor">#1D000000</color>
+    <color name="MaskColor">#74FFFFFF</color>
+
     <color name="colorPrimary">#121212</color>
     <color name="colorPrimaryDark">#FF151515</color>
     <color name="colorAccent">#FF151515</color>
@@ -12,7 +19,6 @@
     <color name="MyerSplashDark">#1d1d1d</color>
     <color name="HalfBlack">#97000000</color>
     <color name="SettingBackground">#FF151515</color>
-    <color name="MaskColor">#cc000000</color>
     <color name="HintColor">#afafaf</color>
     <color name="LightGray">#e2e2e2</color>
     <color name="ShadowColor">#2f000000</color>

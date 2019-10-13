@@ -47,7 +47,7 @@ class WallpaperWidgetProvider : AppWidgetProvider() {
         try {
             val body = CloudService.downloadPhoto(UnsplashImageFactory.TODAY_THUMB_URL)
             val outputFile = body.writeToFile(file.path, null)
-            outputFile?.let {
+            outputFile.let {
                 AppWidgetUtils.doWithWidgetId { id ->
                     updateWidget(App.instance, id, it.absolutePath)
                 }

@@ -58,8 +58,9 @@ object NotificationUtils {
         val intent = Intent(App.instance, DownloadService::class.java)
         intent.putExtra(Params.NAME_KEY, fileName)
         intent.putExtra(Params.URL_KEY, url)
+        intent.putExtra(Params.RETRY_KEY, id)
 
-        val resultPendingIntent = PendingIntent.getService(App.instance, 0, intent, 0)
+        val resultPendingIntent = PendingIntent.getService(App.instance, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val builder = NotificationCompat.Builder(App.instance, NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(App.instance.getString(R.string.download_error))

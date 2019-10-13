@@ -18,6 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:contentDescription="@string/image_desc"
+            android:tint="@color/primaryTextColor"
             android:src="@drawable/ic_arrow_back_white"/>
     </FrameLayout>
 
@@ -26,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/settings_title"
-        android:textColor="@android:color/white"
+        android:textColor="@color/primaryTextColor"
         android:textSize="@dimen/page_title_text_size"
         android:textStyle="bold"/>
 

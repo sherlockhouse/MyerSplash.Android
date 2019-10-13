@@ -17,7 +17,6 @@ class AboutActivity : BaseActivity() {
 
     private val idToUrl = mapOf(
             R.id.githubItem to R.string.github_url,
-            R.id.weiboItem to R.string.weibo_url,
             R.id.twitterItem to R.string.twitter_url
     )
 
@@ -30,7 +29,6 @@ class AboutActivity : BaseActivity() {
 
         emailItem.setOnClickListener(this)
         githubItem.setOnClickListener(this)
-        weiboItem.setOnClickListener(this)
         twitterItem.setOnClickListener(this)
         rateItem.setOnClickListener(this)
     }
@@ -42,7 +40,6 @@ class AboutActivity : BaseActivity() {
                 onClickEmail()
             }
             R.id.githubItem,
-            R.id.weiboItem,
             R.id.twitterItem -> {
                 onClickUrl(getString(idToUrl.getValue(v.id)))
             }

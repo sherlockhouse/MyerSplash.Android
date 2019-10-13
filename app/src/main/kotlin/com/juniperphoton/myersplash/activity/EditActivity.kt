@@ -32,6 +32,7 @@ import kotlinx.android.synthetic.main.activity_edit.*
 import java.io.File
 import java.io.FileOutputStream
 import java.util.concurrent.TimeUnit
+import kotlin.math.max
 
 class EditActivity : BaseActivity() {
     companion object {
@@ -39,10 +40,7 @@ class EditActivity : BaseActivity() {
         private const val SAVED_FILE_NAME = "final_dim_image.jpg"
     }
 
-    private val fileUri: Uri by lazy {
-        val uri = intent.getParcelableExtra(Intent.EXTRA_STREAM) as? Uri ?: intent.data
-        return@lazy uri ?: throw IllegalArgumentException("image url should not be null")
-    }
+    private var fileUri: Uri? = null
 
     private var showingPreview: Boolean = false
         set(value) {
@@ -64,6 +62,8 @@ class EditActivity : BaseActivity() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         this.intent = intent
+
+        Pasteur.info(TAG, "on new intent")
         loadImage()
         handleIntent(intent)
     }
@@ -131,7 +131,9 @@ class EditActivity : BaseActivity() {
     }
 
     private fun updatePreviewImage() {
-        val resize = Math.max(previewImageView.height,
+        fileUri = intent.getParcelableExtra(Intent.EXTRA_STREAM) as? Uri ?: intent.data
+
+        val resize = max(previewImageView.height,
                 previewImageView.width)
 
         val request = ImageRequestBuilder.newBuilderWithSource(fileUri)

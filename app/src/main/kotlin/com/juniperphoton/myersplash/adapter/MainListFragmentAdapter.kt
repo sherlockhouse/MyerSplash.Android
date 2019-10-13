@@ -19,7 +19,7 @@ class MainListFragmentAdapter(private var callback: OnClickPhotoItemListener?,
         if (o is MainListFragment) {
             val categoryId = when (position) {
                 0 -> UnsplashCategory.NEW_CATEGORY_ID
-                1 -> UnsplashCategory.FEATURED_CATEGORY_ID
+                1 -> UnsplashCategory.DEVELOP_ID
                 else -> UnsplashCategory.HIGHLIGHTS_CATEGORY_ID
             }
             inject(o, categoryId)

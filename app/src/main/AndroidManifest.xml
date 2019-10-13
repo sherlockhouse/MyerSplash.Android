@@ -58,7 +58,6 @@
             android:name=".activity.EditActivity"
             android:label="Edit wallpaper"
             android:launchMode="singleTask"
-            android:process=":edit"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <intent-filter>

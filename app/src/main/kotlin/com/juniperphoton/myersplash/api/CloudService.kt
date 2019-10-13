@@ -87,13 +87,10 @@ object CloudService {
         return list
     }
 
-    suspend fun getFeaturedPhotos(url: String,
-                                  page: Int): MutableList<UnsplashImage> {
-        val mutableList = mutableListOf<UnsplashImage>()
+    suspend fun getDeveloperPhotos(url: String,
+                                   page: Int): MutableList<UnsplashImage> {
         return photoService
-                .getFeaturedPhotosAsync(url, page, DEFAULT_REQUEST_COUNT).await().mapTo(mutableList) {
-                    it.image!!
-                }
+                .getPhotosAsync(url, page, DEFAULT_REQUEST_COUNT).await()
     }
 
     suspend fun getHighlightsPhotos(page: Int): MutableList<UnsplashImage> {
@@ -126,11 +123,11 @@ object CloudService {
 
     suspend fun downloadPhoto(url: String): ResponseBody {
         return withTimeout(DOWNLOAD_TIMEOUT_MS) {
-            ioService.downloadFileAsync(url).await()
+            ioService.downloadFileAsync(url)
         }
     }
 
     suspend fun reportDownload(url: String): ResponseBody {
-        return ioService.reportDownloadAsync(url).await()
+        return ioService.reportDownloadAsync(url)
     }
 }

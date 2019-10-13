@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="24dp"
     android:layout_alignParentTop="true"
-    android:alpha="0.15"
+    android:alpha="0"
     android:background="@android:color/black"
     android:contentDescription="@string/image_desc"
     android:elevation="4dp"
