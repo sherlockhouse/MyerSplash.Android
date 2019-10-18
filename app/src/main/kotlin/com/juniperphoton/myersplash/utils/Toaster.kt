@@ -1,38 +1,60 @@
 package com.juniperphoton.myersplash.utils
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.view.Gravity
 import android.widget.Toast
+import androidx.annotation.StringRes
 import com.juniperphoton.myersplash.App
+import com.juniperphoton.myersplash.di.AppComponent
 
-object Toaster {
-    private var handler = Handler(Looper.getMainLooper())
+interface Toaster {
+    fun showToast(content: String)
+    fun showToast(@StringRes content: Int)
+    fun cancelToast()
+}
 
-    fun sendShortToast(str: String?) {
-        if (str == null) {
-            return
-        }
-        if (Looper.getMainLooper() != Looper.myLooper()) {
-            handler.post { sendToastInternal(str) }
+object ToasterHelper : Toaster by AppComponent.instance.toaster
+
+class ToasterImpl : Toaster {
+    private var currentToast: Toast? = null
+    private val mainHandler = Handler(Looper.getMainLooper())
+
+    private val context: Context = App.instance
+
+    override fun showToast(content: String) {
+        if (Looper.getMainLooper().thread !== Thread.currentThread()) {
+            mainHandler.post { showToastInternal(context, content) }
         } else {
-            sendToastInternal(str)
+            showToastInternal(context, content)
         }
     }
 
-    fun sendShortToast(strId: Int) {
-        if (strId == 0) {
-            return
-        }
-        if (Looper.getMainLooper() != Looper.myLooper()) {
-            handler.post { sendToastInternal(App.instance.getString(strId)) }
+    override fun showToast(@StringRes content: Int) {
+        if (Looper.getMainLooper().thread !== Thread.currentThread()) {
+            mainHandler.post { showToastInternal(context, content) }
         } else {
-            handler.post { sendToastInternal(App.instance.getString(strId)) }
+            showToastInternal(context, content)
         }
     }
 
-    @SuppressLint("InflateParams")
-    private fun sendToastInternal(str: String?) {
-        Toast.makeText(App.instance, str, Toast.LENGTH_SHORT).show()
+    override fun cancelToast() {
+        if (currentToast != null) {
+            currentToast!!.cancel()
+        }
+    }
+
+    private fun showToastInternal(context: Context, content: String) {
+        cancelToast()
+        currentToast = Toast.makeText(context, content, Toast.LENGTH_SHORT)
+        currentToast!!.show()
+    }
+
+    private fun showToastInternal(context: Context, @StringRes content: Int) {
+        cancelToast()
+        currentToast = Toast.makeText(context, content, Toast.LENGTH_SHORT)
+        currentToast!!.show()
     }
 }

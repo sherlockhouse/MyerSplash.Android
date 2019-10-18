@@ -20,6 +20,7 @@ import com.juniperphoton.myersplash.event.ScrollToTopEvent
 import com.juniperphoton.myersplash.extension.usingWifi
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.*
+import com.juniperphoton.myersplash.viewmodel.ImageListViewModel
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -62,6 +63,8 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
     private var viewLoaded: Boolean = false
 
     private var query: String? = null
+
+    private lateinit var viewModel: ImageListViewModel
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?, savedInstanceState: Bundle?): View? {

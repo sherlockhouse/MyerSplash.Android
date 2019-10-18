@@ -26,8 +26,6 @@ import javax.net.ssl.X509TrustManager
 
 @Suppress("DEPRECATION")
 object CloudService {
-    private const val DEFAULT_TIMEOUT = 10
-    private const val DEFAULT_REQUEST_COUNT = 10
     private const val DEFAULT_HIGHLIGHTS_COUNT = 60
 
     private const val DOWNLOAD_TIMEOUT_MS = 30_000L
@@ -36,47 +34,6 @@ object CloudService {
     private const val TAG = "CloudService"
 
     private val endDate = SimpleDateFormat("yyyy/MM/dd").parse("2017/03/20")
-
-    private val retrofit: Retrofit
-    private val photoService: PhotoService
-    private val ioService: IOService
-    private val builder: OkHttpClient.Builder = OkHttpClient.Builder()
-
-    init {
-        if (BuildConfig.DEBUG) {
-            val ctx = SSLContext.getInstance("SSL")
-
-            val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
-                override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
-
-                @SuppressLint("TrustAllX509TrustManager")
-                @Throws(CertificateException::class)
-                override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) = Unit
-
-                @SuppressLint("TrustAllX509TrustManager")
-                @Throws(CertificateException::class)
-                override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) = Unit
-            })
-
-            ctx.init(null, trustAllCerts, SecureRandom())
-
-            builder.sslSocketFactory(ctx.socketFactory)
-        }
-
-        builder.connectTimeout(DEFAULT_TIMEOUT.toLong(), TimeUnit.SECONDS)
-                .addInterceptor(CustomInterceptor())
-
-        retrofit = Retrofit.Builder()
-                .client(builder.build())
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addCallAdapterFactory(CoroutineCallAdapterFactory())
-                .baseUrl(Request.BASE_URL)
-                .build()
-
-        photoService = retrofit.create(PhotoService::class.java)
-        ioService = retrofit.create(IOService::class.java)
-    }
 
     suspend fun getPhotos(url: String,
                           page: Int): MutableList<UnsplashImage> {
