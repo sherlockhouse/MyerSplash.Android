@@ -29,7 +29,7 @@ abstract class BaseActivity : AppCompatActivity(), View.OnApplyWindowInsetsListe
         updateStatusBar(currentNightMode == Configuration.UI_MODE_NIGHT_NO)
     }
 
-    private fun updateStatusBar(darkText: Boolean) {
+    protected fun updateStatusBar(darkText: Boolean) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val decorView = window.decorView
             var prev = decorView.systemUiVisibility
@@ -37,6 +37,11 @@ abstract class BaseActivity : AppCompatActivity(), View.OnApplyWindowInsetsListe
                 prev or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
             } else {
                 prev and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                prev = prev or View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
             }
             decorView.systemUiVisibility = prev
         }

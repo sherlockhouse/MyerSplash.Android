@@ -57,6 +57,8 @@ class EditActivity : BaseActivity() {
         editConfirmFab.setOnClickListener(this)
         editPreviewFab.setOnClickListener(this)
         handleIntent(intent)
+
+        updateStatusBar(false)
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -114,7 +116,6 @@ class EditActivity : BaseActivity() {
     private fun initView() {
         brightnessSeekBar.setOnSeekBarChangeListener(object : SimpleOnSeekBarChangeListener() {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                progressText.text = progress.toString()
                 maskView.alpha = progress * 1f / 100
             }
         })
@@ -131,10 +132,24 @@ class EditActivity : BaseActivity() {
     }
 
     private fun updatePreviewImage() {
+        var width = previewImageView.width
+        var height = previewImageView.height
+
+        if (width == 0) {
+            width = previewImageView.measuredWidth
+        }
+
+        if (height == 0) {
+            height = previewImageView.measuredHeight
+        }
+
+        if (width == 0 || height == 0) {
+            return
+        }
+
         fileUri = intent.getParcelableExtra(Intent.EXTRA_STREAM) as? Uri ?: intent.data
 
-        val resize = max(previewImageView.height,
-                previewImageView.width)
+        val resize = max(width, height)
 
         val request = ImageRequestBuilder.newBuilderWithSource(fileUri)
                 .setResizeOptions(ResizeOptions(resize, resize))
@@ -209,11 +224,13 @@ class EditActivity : BaseActivity() {
     @SuppressLint("WrongThread")
     @WorkerThread
     private fun composeMaskInternal(): File? {
+        fileUri ?: return null
+
         val opt = BitmapFactory.Options()
         opt.inJustDecodeBounds = true
 
         // First decode bounds to get width and height
-        val inputStream = contentResolver.openInputStream(fileUri)
+        val inputStream = contentResolver.openInputStream(fileUri!!)
         inputStream.use {
             BitmapFactory.decodeStream(inputStream, null, opt)
         }

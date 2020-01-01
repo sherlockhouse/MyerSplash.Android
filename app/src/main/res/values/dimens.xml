@@ -55,5 +55,5 @@
     <dimen name="cardview_corner_radius">2dp</dimen>
     <dimen name="flipper_fab_size">56dp</dimen>
     <dimen name="dim_layout_margin_around">12dp</dimen>
-    <dimen name="dim_margin_bottom">50dp</dimen>
+    <dimen name="dim_margin_bottom">36dp</dimen>
 </resources>
