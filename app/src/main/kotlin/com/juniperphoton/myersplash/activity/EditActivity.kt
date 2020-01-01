@@ -131,10 +131,24 @@ class EditActivity : BaseActivity() {
     }
 
     private fun updatePreviewImage() {
+        var width = previewImageView.width
+        var height = previewImageView.height
+
+        if (width == 0) {
+            width = previewImageView.measuredWidth
+        }
+
+        if (height == 0) {
+            height = previewImageView.measuredHeight
+        }
+
+        if (width == 0 || height == 0) {
+            return
+        }
+
         fileUri = intent.getParcelableExtra(Intent.EXTRA_STREAM) as? Uri ?: intent.data
 
-        val resize = max(previewImageView.height,
-                previewImageView.width)
+        val resize = max(width, height)
 
         val request = ImageRequestBuilder.newBuilderWithSource(fileUri)
                 .setResizeOptions(ResizeOptions(resize, resize))
