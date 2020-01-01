@@ -89,4 +89,5 @@
     <string name="email_title">发送到</string>
     <string name="search_empty_hint">请输入关键字搜索</string>
     <string name="all_clear">清理完毕</string>
+    <string name="clip_image_by_screen">根据当前显示区域裁剪</string>
 </resources>

@@ -57,6 +57,8 @@ class EditActivity : BaseActivity() {
         editConfirmFab.setOnClickListener(this)
         editPreviewFab.setOnClickListener(this)
         handleIntent(intent)
+
+        updateStatusBar(false)
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -114,7 +116,6 @@ class EditActivity : BaseActivity() {
     private fun initView() {
         brightnessSeekBar.setOnSeekBarChangeListener(object : SimpleOnSeekBarChangeListener() {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                progressText.text = progress.toString()
                 maskView.alpha = progress * 1f / 100
             }
         })

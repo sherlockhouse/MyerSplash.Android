@@ -126,4 +126,5 @@
     <string name="share_text">Share %s\'s amazing photo from MyerSplash app. Download this photo: %s</string>
     <string name="search_empty_hint">Input the keyword to search.</string>
     <string name="all_clear">Cleaned up.</string>
+    <string name="clip_image_by_screen">Clip image by screen</string>
 </resources>

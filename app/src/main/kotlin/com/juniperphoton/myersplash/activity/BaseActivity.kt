@@ -29,7 +29,7 @@ abstract class BaseActivity : AppCompatActivity(), View.OnApplyWindowInsetsListe
         updateStatusBar(currentNightMode == Configuration.UI_MODE_NIGHT_NO)
     }
 
-    private fun updateStatusBar(darkText: Boolean) {
+    protected fun updateStatusBar(darkText: Boolean) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val decorView = window.decorView
             var prev = decorView.systemUiVisibility
