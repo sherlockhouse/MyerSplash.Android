@@ -5,17 +5,6 @@
         <item>@string/delete_downloaded</item>
         <item>@string/delete_failed</item>
     </string-array>
-    <string-array name="thanks_array">
-        <item>Kotlin</item>
-        <item>Fresco</item>
-        <item>Realm</item>
-        <item>RxJava</item>
-        <item>Retrofit</item>
-        <item>ButterKnife</item>
-        <item>AlipayZeroSdk</item>
-        <item>Gson</item>
-        <item>ConstraintLayout</item>
-    </string-array>
     <string-array name="search_category">
         <item>Buildings</item>
         <item>Food</item>
@@ -27,6 +16,5 @@
         <item>Dusk</item>
         <item>Mountain</item>
         <item>Galaxy</item>
-        <item>Spring</item>
     </string-array>
 </resources>
