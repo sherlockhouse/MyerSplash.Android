@@ -45,9 +45,6 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
     @BindView(R.id.search_result_root)
     lateinit var resultRoot: FrameLayout
 
-    @BindView(R.id.search_detail_view)
-    lateinit var detailView: ImageDetailView
-
     @BindView(R.id.detail_search_btn)
     lateinit var searchBtn: View
 
@@ -244,6 +241,4 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
         editText.setText("")
         toggleSearchButtons(show = false, animation = true)
     }
-
-    fun tryHide(): Boolean = detailView.tryHide()
 }

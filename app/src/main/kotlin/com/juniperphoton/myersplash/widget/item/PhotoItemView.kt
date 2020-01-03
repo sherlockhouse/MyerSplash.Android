@@ -90,7 +90,10 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : ConstraintLayout(c
     override fun onClick(v: View?) {
         val url = unsplashImage?.listUrl ?: return
 
-        if (!Fresco.getImagePipeline().isInBitmapMemoryCache(Uri.parse(url))) {
+        val uri = Uri.parse(url)
+        val pipeline = Fresco.getImagePipeline()
+
+        if (!pipeline.isInBitmapMemoryCache(uri)) {
             return
         }
 

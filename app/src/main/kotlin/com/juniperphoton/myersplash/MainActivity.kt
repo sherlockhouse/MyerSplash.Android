@@ -295,17 +295,15 @@ class MainActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        if (searchView.visibility == View.VISIBLE) {
-            if (searchView.tryHide()) {
-                return
-            }
-            toggleSearchView(show = false, useAnimation = true)
-            return
-        }
         if (imageDetailView.tryHide()) {
             return
         }
 
+        if (searchView.visibility == View.VISIBLE) {
+            toggleSearchView(show = false, useAnimation = true)
+            return
+        }
+        
         moveTaskToBack(true)
     }
 }

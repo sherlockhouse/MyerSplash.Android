@@ -105,9 +105,4 @@
         android:clickable="false"
         tools:alpha="1"
         tools:text="# LAKE" />
-
-    <com.juniperphoton.myersplash.widget.ImageDetailView
-        android:id="@+id/search_detail_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
