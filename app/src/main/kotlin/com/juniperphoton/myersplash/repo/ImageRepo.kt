@@ -94,6 +94,14 @@ class NewImageRepo @Inject constructor(
     }
 }
 
+class RandomImageRepo @Inject constructor(
+        private val service: PhotoService
+) : ImageRepo() {
+    override suspend fun loadData(page: Int): List<UnsplashImage> {
+        return service.getRandomPhotos(page)
+    }
+}
+
 class DeveloperImageRepo @Inject constructor(
         private val service: PhotoService
 ) : ImageRepo() {

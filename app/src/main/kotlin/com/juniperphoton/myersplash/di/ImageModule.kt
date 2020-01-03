@@ -25,6 +25,9 @@ class ImageModule {
             UnsplashCategory.SEARCH_ID -> {
                 SearchImageRepo(service)
             }
+            UnsplashCategory.RANDOM_CATEGORY_ID -> {
+                RandomImageRepo(service)
+            }
             else -> {
                 throw IllegalArgumentException("Unknown type of $type")
             }

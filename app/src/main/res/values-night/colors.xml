@@ -3,6 +3,7 @@
     <color name="primaryBackgroundColor">#181818</color>
     <color name="primaryHalfBackgroundColor">#D2181818</color>
     <color name="primaryTextColor">#E7E7E7</color>
+    <color name="primaryUnselectedColor">#5EE7E7E7</color>
     <color name="primaryRevTextColor">#181818</color>
     <color name="colorPrimaryDark">#FFFFFF</color>
     <color name="MyerSplashThemeColor">#3ADBEF</color>
