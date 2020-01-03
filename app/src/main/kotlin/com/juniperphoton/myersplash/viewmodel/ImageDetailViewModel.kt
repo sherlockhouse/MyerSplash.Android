@@ -5,32 +5,28 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.net.Uri
-import androidx.core.content.FileProvider
-import androidx.lifecycle.AndroidViewModel
-import com.juniperphoton.myersplash.App
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.juniperphoton.myersplash.LiveDataEvent
 import com.juniperphoton.myersplash.R
-import com.juniperphoton.myersplash.db.DetailImageRepo
+import com.juniperphoton.myersplash.liveDataEvent
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
+import com.juniperphoton.myersplash.repo.DetailImageRepo
 import com.juniperphoton.myersplash.utils.AnalysisHelper
 import com.juniperphoton.myersplash.utils.DownloadUtils
-import com.juniperphoton.myersplash.utils.FileUtils
-import com.juniperphoton.myersplash.utils.Toaster
-import com.juniperphoton.myersplash.view.ImageDetailViewContract
 import io.reactivex.Flowable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.runBlocking
 import java.io.File
+import javax.inject.Inject
 
-class ImageDetailViewModel(app: Application) : AndroidViewModel(app), CoroutineScope by MainScope() {
-    private val app = getApplication<App>()
-    private val repo = DetailImageRepo()
+class ImageDetailViewModel(app: Application) : BaseViewModel(app) {
+    @Inject
+    lateinit var repo: DetailImageRepo
 
-    var viewContract: ImageDetailViewContract? = null
     var unsplashImage: UnsplashImage? = null
 
-    private var prevItem: DownloadItem? = null
+    private var downloadItem: DownloadItem? = null
 
     var associatedDownloadItem: Flowable<DownloadItem>? = null
         get() {
@@ -38,13 +34,25 @@ class ImageDetailViewModel(app: Application) : AndroidViewModel(app), CoroutineS
                 field = repo.retrieveAssociatedItem(unsplashImage?.id ?: "")
             }
             return field?.doOnNext {
-                prevItem = it
+                downloadItem = it
             }
         }
 
+    private val _navigateToAuthorPage = MutableLiveData<LiveDataEvent<String>>()
+    val navigateToAuthorPage: LiveData<LiveDataEvent<String>>
+        get() = _navigateToAuthorPage
+
+    private val _share = MutableLiveData<LiveDataEvent<UnsplashImage>>()
+    val share: LiveData<LiveDataEvent<UnsplashImage>>
+        get() = _share
+
+    private val _launchEdit = MutableLiveData<LiveDataEvent<Uri>>()
+    val launchEdit: LiveData<LiveDataEvent<Uri>>
+        get() = _launchEdit
+
     fun navigateToAuthorPage() {
         unsplashImage?.userHomePage?.let {
-            viewContract?.navigateToAuthorPage(it)
+            _navigateToAuthorPage.value = it.liveDataEvent
         }
     }
 
@@ -55,18 +63,9 @@ class ImageDetailViewModel(app: Application) : AndroidViewModel(app), CoroutineS
     }
 
     fun share() {
-        val image = unsplashImage ?: return
-        val file = FileUtils.getCachedFile(image.listUrl!!)
-
-        if (file == null || !file.exists()) {
-            Toaster.sendShortToast(app.getString(R.string.something_wrong))
-            return
+        unsplashImage?.let {
+            _share.value = it.liveDataEvent
         }
-
-        val shareText = app.getString(R.string.share_text, image.userName, image.downloadUrl)
-        val contentUri = FileProvider.getUriForFile(app,
-                app.getString(R.string.authorities), file)
-        viewContract?.launchShare(contentUri, shareText)
     }
 
     fun download() {
@@ -88,8 +87,8 @@ class ImageDetailViewModel(app: Application) : AndroidViewModel(app), CoroutineS
 
     fun setAs() {
         AnalysisHelper.logClickSetAsInDetails()
-        val url = "${prevItem?.filePath}"
-        viewContract?.launchEditActivity(Uri.fromFile(File(url)))
+        val url = "${downloadItem?.filePath}"
+        _launchEdit.value = Uri.fromFile(File(url)).liveDataEvent
     }
 
     fun onHide() {
