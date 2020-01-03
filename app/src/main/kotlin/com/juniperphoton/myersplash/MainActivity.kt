@@ -8,19 +8,21 @@ import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
 import android.graphics.drawable.Icon
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.ViewGroup
+import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.appbar.AppBarLayout
+import com.juniperphoton.myersplash.activity.AboutActivity
 import com.juniperphoton.myersplash.activity.BaseActivity
 import com.juniperphoton.myersplash.activity.DownloadsListActivity
+import com.juniperphoton.myersplash.activity.SettingsActivity
 import com.juniperphoton.myersplash.adapter.MainAdapter
-import com.juniperphoton.myersplash.extension.getStatusBarHeight
 import com.juniperphoton.myersplash.extension.pow
 import com.juniperphoton.myersplash.extension.startServiceSafely
-import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.service.DownloadService
 import com.juniperphoton.myersplash.utils.AnalysisHelper
 import com.juniperphoton.myersplash.utils.Params
@@ -43,10 +45,11 @@ class MainActivity : BaseActivity() {
         private const val ACTION_SEARCH = "action.search"
         private const val ACTION_DOWNLOADS = "action.download"
 
-        private val ID_MAPS = mutableMapOf(
-                0 to UnsplashCategory.NEW_CATEGORY_ID,
-                1 to UnsplashCategory.DEVELOP_ID,
-                2 to UnsplashCategory.HIGHLIGHTS_CATEGORY_ID)
+        private val menuMap: Map<Int, Class<out Any>> = mapOf(
+                R.id.menu_settings to SettingsActivity::class.java,
+                R.id.menu_downloads to DownloadsListActivity::class.java,
+                R.id.menu_about to AboutActivity::class.java
+        )
     }
 
     private var mainAdapter: MainAdapter? = null
@@ -138,10 +141,6 @@ class MainActivity : BaseActivity() {
         PermissionUtils.checkAndRequest(this@MainActivity)
     }
 
-    private fun getCurrentPageId(): Int {
-        return ID_MAPS[pivotTitleBar.selectedItem]!!
-    }
-
     private fun toggleSearchView(show: Boolean, useAnimation: Boolean) {
         if (show) {
             searchFab.hide()
@@ -206,18 +205,6 @@ class MainActivity : BaseActivity() {
             toggleSearchView(show = true, useAnimation = true)
         }
 
-        pivotTitleBar.apply {
-            val lp = pivotTitleBar.layoutParams as ViewGroup.MarginLayoutParams
-            lp.topMargin = getStatusBarHeight()
-            layoutParams = lp
-
-            onSingleTap = {
-                viewPager.currentItem = it
-                sharedViewModel.onRequestScrollToTop.value = getCurrentPageId().liveDataEvent
-            }
-            selectedItem = initNavigationIndex
-        }
-
         mainAdapter = MainAdapter(supportFragmentManager)
 
         viewPager.apply {
@@ -230,9 +217,8 @@ class MainActivity : BaseActivity() {
                                             positionOffsetPixels: Int) = Unit
 
                 override fun onPageSelected(position: Int) {
-                    pivotTitleBar.selectedItem = position
-
-                    val title = "# ${pivotTitleBar.selectedString}"
+                    val text = tabLayout.getTabAt(position)?.text
+                    val title = "# $text"
                     tagView.text = title
                     AnalysisHelper.logTabSelected(title)
                 }
@@ -240,6 +226,9 @@ class MainActivity : BaseActivity() {
                 override fun onPageScrollStateChanged(state: Int) = Unit
             })
         }
+
+        tabLayout.tabRippleColor = null
+        tabLayout.setupWithViewPager(viewPager)
 
         tagView.text = "# ${getString(R.string.pivot_new)}"
 
@@ -263,7 +252,20 @@ class MainActivity : BaseActivity() {
                 })
 
         tagView.setOnClickListener {
-            sharedViewModel.onRequestScrollToTop.value = getCurrentPageId().liveDataEvent
+            sharedViewModel.onRequestScrollToTop.value = tabLayout.selectedTabPosition.liveDataEvent
+        }
+
+        moreBtn.setOnClickListener {
+            val popupMenu = PopupMenu(this, moreBtn)
+            popupMenu.inflate(R.menu.main)
+            popupMenu.gravity = Gravity.END
+            popupMenu.setOnMenuItemClickListener { item ->
+                val intent: Intent?
+                intent = Intent(this, menuMap[item.itemId])
+                this.startActivity(intent)
+                true
+            }
+            popupMenu.show()
         }
     }
 

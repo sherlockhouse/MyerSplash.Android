@@ -3,6 +3,7 @@
     <color name="primaryBackgroundColor">#FFFFFF</color>
     <color name="primaryHalfBackgroundColor">#C4FFFFFF</color>
     <color name="primaryTextColor">#161616</color>
+    <color name="primaryUnselectedColor">#5E161616</color>
     <color name="primaryRevTextColor">#FFFFFF</color>
     <color name="rippleColor">#1D000000</color>
     <color name="MaskColor">#74FFFFFF</color>

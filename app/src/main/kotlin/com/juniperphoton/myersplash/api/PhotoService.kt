@@ -19,6 +19,11 @@ interface PhotoService {
                                    @Query("per_page") per_page: Int = DEFAULT_REQUEST_COUNT
     ): MutableList<UnsplashImage>
 
+    @GET("/photos/random")
+    suspend fun getRandomPhotos(@Query("per_page") per_page: Int = DEFAULT_REQUEST_COUNT,
+                                @Query("count") count: Int = 30
+    ): MutableList<UnsplashImage>
+
     @GET("/search/photos")
     suspend fun searchPhotosByQuery(
             @Query("query") query: String,

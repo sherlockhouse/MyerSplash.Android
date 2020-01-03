@@ -79,6 +79,7 @@
     <string name="recommended_tag">今日推荐</string>
     <string name="copied_tag">成功复制了</string>
     <string name="pivot_new">编辑推荐</string>
+    <string name="pivot_random">随机</string>
     <string name="pivot_developer">开发者</string>
     <string name="pivot_highlights">每日推荐</string>
     <string name="delete_downloading">删除正在下载的内容</string>
