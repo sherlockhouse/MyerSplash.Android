@@ -22,6 +22,7 @@ import android.widget.TextView
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
@@ -40,6 +41,8 @@ import com.juniperphoton.myersplash.misc.Action
 import com.juniperphoton.myersplash.misc.guard
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
+import com.juniperphoton.myersplash.model.getDisplayRatio
+import com.juniperphoton.myersplash.model.getDisplayRatioF
 import com.juniperphoton.myersplash.utils.*
 import com.juniperphoton.myersplash.viewmodel.AppViewModelProviders
 import com.juniperphoton.myersplash.viewmodel.ClickData
@@ -103,7 +106,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
     lateinit var detailRootScrollView: ViewGroup
 
     @BindView(R.id.detail_hero_view)
-    lateinit var heroView: SimpleDraweeView
+    lateinit var photoView: SimpleDraweeView
 
     @BindView(R.id.detail_backgrd_rl)
     lateinit var detailInfoRootLayout: ViewGroup
@@ -225,7 +228,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
             start()
         }
 
-        heroView.setOnTouchListener { _, e ->
+        photoView.setOnTouchListener { _, e ->
             if (animating) {
                 return@setOnTouchListener false
             }
@@ -349,15 +352,14 @@ class ImageDetailView(context: Context, attrs: AttributeSet
         return file.exists() && file.canRead()
     }
 
-    private val targetY: Float
-        get() {
-            val decorView = (context as Activity).window.decorView
-            val height = decorView.height
-            val width = decorView.width
-            val detailHeight = (width / (3 / 2f)).toInt() +
-                    context.resources.getDimensionPixelSize(R.dimen.img_detail_info_height)
-            return (height - detailHeight) / 2f
-        }
+    private fun getTargetY(ratio: Float): Float {
+        val decorView = (context as Activity).window.decorView
+        val height = decorView.height
+        val width = decorView.width
+        val detailHeight = (width / ratio).toInt() +
+                context.resources.getDimensionPixelSize(R.dimen.img_detail_info_height)
+        return (height - detailHeight) / 2f
+    }
 
     private fun toggleDetailRLAnimation(show: Boolean, oneshot: Boolean) {
         Pasteur.info(TAG) {
@@ -622,7 +624,12 @@ class ImageDetailView(context: Context, attrs: AttributeSet
             return
         }
 
-        heroView.setImageURI(unsplashImage.listUrl)
+        val lp = photoView.layoutParams as ConstraintLayout.LayoutParams
+        lp.dimensionRatio = unsplashImage.getDisplayRatio(context)
+        photoView.layoutParams = lp
+
+        photoView.setImageURI(unsplashImage.listUrl)
+
         scope?.cancel()
         scope = CoroutineScope(Dispatchers.Main)
 
@@ -671,7 +678,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
                 }
 
         toggleMaskAnimation(true)
-        toggleHeroViewAnimation(listPositionY, targetY, true)
+        toggleHeroViewAnimation(listPositionY, getTargetY(unsplashImage.getDisplayRatioF(context)), true)
     }
 
     @UiThread

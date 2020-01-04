@@ -32,7 +32,7 @@ class MainAdapter(fm: FragmentManager
                 UnsplashCategory.RANDOM_CATEGORY_ID
             }
             3 -> {
-                UnsplashCategory.DEVELOP_ID
+                UnsplashCategory.DEVELOPER_ID
             }
             else -> throw IllegalArgumentException("Unknown position: $position")
         })

@@ -1,5 +1,7 @@
 package com.juniperphoton.myersplash.model
 
+import android.app.Activity
+import android.content.Context
 import android.graphics.Color
 import com.google.gson.annotations.SerializedName
 import com.juniperphoton.myersplash.App
@@ -94,6 +96,45 @@ class UnsplashImage {
                 else -> ""
             }
         }
+}
+
+fun UnsplashImage.getDisplayRatioF(context: Context): Float {
+    val ratioStr = getDisplayRatio(context)
+    val array = ratioStr.split(":")
+    val w = array.getOrNull(0)?.toFloatOrNull() ?: 3f
+    val h = array.getOrNull(1)?.toFloatOrNull() ?: 2f
+    return w / h
+}
+
+@Suppress("UnnecessaryVariable")
+fun UnsplashImage.getDisplayRatio(context: Context): String {
+    if (context is Activity) {
+        val fixedInfoHeight = context.resources
+                .getDimensionPixelSize(R.dimen.img_detail_info_height)
+
+        val fixedMargin = context.resources
+                .getDimensionPixelSize(R.dimen.detail_fixed_top_bottom_margin)
+
+        val decorViewWidth = context.window.decorView.width
+        val decorViewHeight = context.window.decorView.height
+
+        val availableWidth = decorViewWidth
+        val availableHeight = decorViewHeight - fixedMargin * 2
+        val availableRatio = availableWidth / availableHeight.toFloat()
+
+        val imageRatio = this.width / this.height.toFloat()
+        val wantedWidth = decorViewWidth
+        val wantedHeight = (wantedWidth / imageRatio)+fixedInfoHeight
+        val wantedRatio = wantedWidth / wantedHeight
+
+        return if (wantedRatio < availableRatio) {
+            "$decorViewWidth:$decorViewHeight"
+        } else {
+            "$width:$height"
+        }
+    } else {
+        return "3:2"
+    }
 }
 
 class UnsplashImageLinks {

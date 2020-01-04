@@ -12,12 +12,12 @@ import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.addDimensions
 import com.juniperphoton.myersplash.extension.getNavigationBarSize
 import com.juniperphoton.myersplash.model.UnsplashImage
+import com.juniperphoton.myersplash.model.getDisplayRatioF
 import com.juniperphoton.myersplash.utils.Pasteur
 import com.juniperphoton.myersplash.widget.item.OnClickPhotoListener
 import com.juniperphoton.myersplash.widget.item.OnClickQuickDownloadListener
 import com.juniperphoton.myersplash.widget.item.PhotoFooterView
 import com.juniperphoton.myersplash.widget.item.PhotoItemView
-import kotlin.math.ceil
 
 class ImageAdapter(
         private val context: Context
@@ -40,7 +40,6 @@ class ImageAdapter(
     private var isAutoLoadMore = true
 
     private var recyclerView: RecyclerView? = null
-    private var layoutManager: RecyclerView.LayoutManager? = null
     private var lastPosition = -1
 
     private var footerView: PhotoFooterView? = null
@@ -58,12 +57,7 @@ class ImageAdapter(
      */
     var onClickQuickDownload: OnClickQuickDownloadListener? = null
 
-    private val maxPhotoCountOnScreen: Int
-        get() {
-            val height = recyclerView!!.height
-            val imgHeight = recyclerView!!.resources.getDimensionPixelSize(R.dimen.img_height)
-            return ceil(height.toDouble() / imgHeight.toDouble()).toInt()
-        }
+    private var maxPhotoCountOnScreen: Int = 0
 
     private var animateOnBind = true
 
@@ -114,7 +108,7 @@ class ImageAdapter(
     }
 
     private fun animateContainer(container: View, position: Int) {
-        val lastItemIndex = findLastVisibleItemPosition(layoutManager)
+        val lastItemIndex = findLastVisibleItemPosition(recyclerView?.layoutManager)
         if (position >= maxPhotoCountOnScreen || position <= lastPosition
                 || lastItemIndex >= maxPhotoCountOnScreen) {
             return
@@ -160,7 +154,6 @@ class ImageAdapter(
         super.onAttachedToRecyclerView(recyclerView)
         this.recyclerView = recyclerView
         lastPosition = -1
-        layoutManager = recyclerView.layoutManager
     }
 
     fun indicateLoadMoreError() {
@@ -175,7 +168,8 @@ class ImageAdapter(
         animateOnBind = animated
 
         data.clear()
-        setLoadMoreData(list)
+        addAllData(list)
+        updateMaxItemsOnRefreshScreen()
 
         val size = data.size
         when {
@@ -194,7 +188,32 @@ class ImageAdapter(
         }
     }
 
-    private fun setLoadMoreData(list: List<UnsplashImage>) {
+    private fun updateMaxItemsOnRefreshScreen() {
+        val rv = recyclerView ?: return
+
+        val width = rv.width
+        val height = rv.height
+
+        var accHeight = 0f
+
+        kotlin.run {
+            data.forEachIndexed { index, unsplashImage ->
+                val ratio = unsplashImage.getDisplayRatioF(context)
+                accHeight += width / ratio
+
+                if (accHeight >= height) {
+                    maxPhotoCountOnScreen = index + 1
+                    return@run
+                }
+            }
+        }
+
+        Pasteur.info(TAG) {
+            "updateMaxItemsOnRefreshScreen: $maxPhotoCountOnScreen"
+        }
+    }
+
+    private fun addAllData(list: List<UnsplashImage>) {
         val size = list.size
         data.addAll(list)
         when {

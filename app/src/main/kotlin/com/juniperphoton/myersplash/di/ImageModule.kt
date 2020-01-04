@@ -16,7 +16,7 @@ class ImageModule {
             UnsplashCategory.NEW_CATEGORY_ID -> {
                 NewImageRepo(service)
             }
-            UnsplashCategory.DEVELOP_ID -> {
+            UnsplashCategory.DEVELOPER_ID -> {
                 DeveloperImageRepo(service)
             }
             UnsplashCategory.HIGHLIGHTS_CATEGORY_ID -> {

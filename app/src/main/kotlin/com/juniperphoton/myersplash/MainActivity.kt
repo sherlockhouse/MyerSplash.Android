@@ -299,7 +299,11 @@ class MainActivity : BaseActivity() {
             toggleSearchView(show = false, useAnimation = true)
             return
         }
-        
-        moveTaskToBack(true)
+
+        if (!BuildConfig.DEBUG) {
+            moveTaskToBack(true)
+        } else {
+            super.onBackPressed()
+        }
     }
 }
