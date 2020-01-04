@@ -8,7 +8,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.RectF
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.util.AttributeSet
@@ -38,10 +37,12 @@ import com.juniperphoton.myersplash.activity.EditActivity
 import com.juniperphoton.myersplash.di.AppComponent
 import com.juniperphoton.myersplash.extension.*
 import com.juniperphoton.myersplash.misc.Action
+import com.juniperphoton.myersplash.misc.guard
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.*
 import com.juniperphoton.myersplash.viewmodel.AppViewModelProviders
+import com.juniperphoton.myersplash.viewmodel.ClickData
 import com.juniperphoton.myersplash.viewmodel.ImageDetailViewModel
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -163,6 +164,14 @@ class ImageDetailView(context: Context, attrs: AttributeSet
     private var animating: Boolean = false
     private var copied: Boolean = false
 
+    private var downX: Float = 0f
+    private var downY: Float = 0f
+
+    private var startX: Float = 0f
+    private var startY: Float = 0f
+
+    private var pointerDown: Boolean = false
+
     init {
         LayoutInflater.from(context).inflate(R.layout.detail_content, this, true)
         ButterKnife.bind(this, this)
@@ -271,14 +280,6 @@ class ImageDetailView(context: Context, attrs: AttributeSet
         }
     }
 
-    private var downX: Float = 0f
-    private var downY: Float = 0f
-
-    private var startX: Float = 0f
-    private var startY: Float = 0f
-
-    private var pointerDown: Boolean = false
-
     private fun toggleFadeAnimation(show: Boolean) {
         if (show) {
             if (detailInfoRootLayout.alpha == 1f) {
@@ -342,7 +343,9 @@ class ImageDetailView(context: Context, attrs: AttributeSet
     }
 
     private fun checkDownloadStatus(item: DownloadItem): Boolean {
-        val file = File(item.filePath)
+        val path = item.filePath ?: return false
+
+        val file = File(path)
         return file.exists() && file.canRead()
     }
 
@@ -357,6 +360,10 @@ class ImageDetailView(context: Context, attrs: AttributeSet
         }
 
     private fun toggleDetailRLAnimation(show: Boolean, oneshot: Boolean) {
+        Pasteur.info(TAG) {
+            "toggleDetailRLAnimation, show: $show, oneshot: $oneshot"
+        }
+
         val startY = if (show) -resources.getDimensionPixelSize(R.dimen.img_detail_info_height) else 0
         val endY = if (show) 0 else -resources.getDimensionPixelSize(R.dimen.img_detail_info_height)
 
@@ -568,7 +575,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
         context.startActivity(intent)
     }
 
-    private fun navigateToAuthorPage(url: String) {
+    private fun navigateToAuthorPage(url: String) = guard {
         val uri = Uri.parse(url)
 
         val intentBuilder = CustomTabsIntent.Builder()
@@ -604,23 +611,26 @@ class ImageDetailView(context: Context, attrs: AttributeSet
 
     /**
      * Show detailed image
-     * @param rectF         rect of original image position
-     * @param unsplashImage clicked image
-     * @param itemView      clicked view
+     * @param clickData    clicked data info, including the rectF of clicked area and image.
      */
-    fun show(rectF: RectF, unsplashImage: UnsplashImage, itemView: View) {
+    fun show(clickData: ClickData) {
+        val (rectF, unsplashImage, itemView) = clickData
+
         AppComponent.instance.analysisHelper.logToggleImageDetails()
 
         if (clickedView != null) {
             return
         }
 
+        heroView.setImageURI(unsplashImage.listUrl)
+        scope?.cancel()
         scope = CoroutineScope(Dispatchers.Main)
 
         viewModel.unsplashImage = unsplashImage
 
-        clickedView = itemView
-        clickedView!!.visibility = View.INVISIBLE
+        clickedView = itemView.apply {
+            visibility = View.INVISIBLE
+        }
 
         val themeColor = unsplashImage.themeColor
 
@@ -637,8 +647,6 @@ class ImageDetailView(context: Context, attrs: AttributeSet
 
         nameTextView.text = unsplashImage.userName
         progressView.progress = 5
-
-        heroView.setImageURI(unsplashImage.listUrl)
         detailRootScrollView.visibility = View.VISIBLE
 
         val heroImagePosition = IntArray(2)

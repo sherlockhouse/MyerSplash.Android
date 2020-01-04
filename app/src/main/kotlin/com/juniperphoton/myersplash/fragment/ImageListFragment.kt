@@ -20,7 +20,10 @@ import com.juniperphoton.myersplash.liveDataEvent
 import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.*
-import com.juniperphoton.myersplash.viewmodel.*
+import com.juniperphoton.myersplash.viewmodel.AppViewModelProviders
+import com.juniperphoton.myersplash.viewmodel.ImageListViewModel
+import com.juniperphoton.myersplash.viewmodel.ImageSharedViewModel
+import com.juniperphoton.myersplash.viewmodel.SearchImageViewModel
 import kotlinx.android.synthetic.main.detail_no_item.*
 import kotlinx.android.synthetic.main.fragment_list.*
 
@@ -158,8 +161,9 @@ class ImageListFragment : Fragment() {
                 AppComponent.instance.analysisHelper.logClickDownloadInList()
                 download(image)
             }
-            onClickPhoto = { r, i, v ->
-                sharedViewModel.onClickedImage.value = ClickData(r, i, v).liveDataEvent
+
+            onClickPhoto = { data ->
+                sharedViewModel.onClickedImage.value = data.liveDataEvent
             }
 
             viewModel.images.value?.let {

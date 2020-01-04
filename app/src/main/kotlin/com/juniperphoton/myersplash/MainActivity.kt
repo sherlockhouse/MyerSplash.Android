@@ -72,8 +72,6 @@ class MainActivity : BaseActivity() {
                     }
 
                     val rectF = it.rectF
-                    val unsplashImage = it.unsplashImage
-                    val view = it.itemView
 
                     val location = IntArray(2)
                     tagView.getLocationOnScreen(location)
@@ -81,7 +79,7 @@ class MainActivity : BaseActivity() {
                         tagView.animate().alpha(0f).setDuration(100).start()
                     }
 
-                    imageDetailView.show(rectF, unsplashImage, view)
+                    imageDetailView.show(it)
                 }
             })
         }

@@ -13,4 +13,6 @@ class ImageSharedViewModel(application: Application) : BaseViewModel(application
     val onRequestRefresh = MutableLiveData<LiveDataEvent<Int>>()
 }
 
-data class ClickData(val rectF: RectF, val unsplashImage: UnsplashImage, val itemView: View)
+data class ClickData(val rectF: RectF,
+                     val unsplashImage: UnsplashImage,
+                     val itemView: View)

@@ -122,6 +122,8 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:clickable="true"
+            app:fadeDuration="0"
+            app:placeholderImage="@color/primaryBackgroundColor"
             app:layout_constraintBottom_toTopOf="@id/detail_backgrd_rl"
             app:layout_constraintDimensionRatio="3:2"
             app:layout_constraintLeft_toLeftOf="parent"

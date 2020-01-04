@@ -3,11 +3,11 @@ package com.juniperphoton.myersplash.activity
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.imagepipeline.core.ImagePipelineFactory
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.db.AppDatabase
+import com.juniperphoton.myersplash.utils.ImageIO
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
 import com.juniperphoton.myersplash.utils.ThemeHelper.switchTheme
 import com.juniperphoton.myersplash.utils.Toaster
@@ -98,7 +98,7 @@ class SettingsActivity : BaseActivity(), View.OnClickListener, CoroutineScope by
     }
 
     private fun clearUp() {
-        Fresco.getImagePipeline().clearCaches()
+        ImageIO.clearCache()
         Toaster.sendShortToast(R.string.all_clear)
         clearCacheSettings.content = "0 MB"
     }
