@@ -300,10 +300,6 @@ class MainActivity : BaseActivity() {
             return
         }
 
-        if (!BuildConfig.DEBUG) {
-            moveTaskToBack(true)
-        } else {
-            super.onBackPressed()
-        }
+        super.onBackPressed()
     }
 }
