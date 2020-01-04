@@ -21,16 +21,15 @@ import com.juniperphoton.myersplash.activity.BaseActivity
 import com.juniperphoton.myersplash.activity.DownloadsListActivity
 import com.juniperphoton.myersplash.activity.SettingsActivity
 import com.juniperphoton.myersplash.adapter.MainAdapter
+import com.juniperphoton.myersplash.di.AppComponent
 import com.juniperphoton.myersplash.extension.pow
 import com.juniperphoton.myersplash.extension.startServiceSafely
 import com.juniperphoton.myersplash.service.DownloadService
-import com.juniperphoton.myersplash.utils.AnalysisHelper
 import com.juniperphoton.myersplash.utils.Params
 import com.juniperphoton.myersplash.utils.Pasteur
 import com.juniperphoton.myersplash.utils.PermissionUtils
 import com.juniperphoton.myersplash.viewmodel.AppViewModelProviders
 import com.juniperphoton.myersplash.viewmodel.ImageSharedViewModel
-import com.juniperphoton.myersplash.widget.PivotTitleBar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.math.abs
 import kotlin.math.sqrt
@@ -55,7 +54,7 @@ class MainActivity : BaseActivity() {
     private var mainAdapter: MainAdapter? = null
 
     private var handleShortcut: Boolean = false
-    private var initNavigationIndex = PivotTitleBar.DEFAULT_SELECTED
+    private var initNavigationIndex = 0
     private var fabPositionX: Int = 0
     private var fabPositionY: Int = 0
 
@@ -68,7 +67,7 @@ class MainActivity : BaseActivity() {
         sharedViewModel = AppViewModelProviders.of(this).get(ImageSharedViewModel::class.java).apply {
             onClickedImage.observe(this@MainActivity, Observer { data ->
                 data?.consume {
-                    Pasteur.i(TAG) {
+                    Pasteur.info(TAG) {
                         "onClickedImage $data"
                     }
 
@@ -90,8 +89,7 @@ class MainActivity : BaseActivity() {
         handleShortcutsAction()
 
         if (savedInstanceState != null) {
-            initNavigationIndex = savedInstanceState.getInt(SAVED_NAVIGATION_INDEX,
-                    PivotTitleBar.DEFAULT_SELECTED)
+            initNavigationIndex = savedInstanceState.getInt(SAVED_NAVIGATION_INDEX, 0)
         }
 
         initShortcuts()
@@ -145,7 +143,7 @@ class MainActivity : BaseActivity() {
         if (show) {
             searchFab.hide()
         } else {
-            AnalysisHelper.logEnterSearch()
+            AppComponent.instance.analysisHelper.logEnterSearch()
             searchFab.show()
         }
 
@@ -220,7 +218,7 @@ class MainActivity : BaseActivity() {
                     val text = tabLayout.getTabAt(position)?.text
                     val title = "# $text"
                     tagView.text = title
-                    AnalysisHelper.logTabSelected(title)
+                    AppComponent.instance.analysisHelper.logTabSelected(title)
                 }
 
                 override fun onPageScrollStateChanged(state: Int) = Unit

@@ -1,6 +1,6 @@
 package com.juniperphoton.myersplash.api
 
-import com.juniperphoton.myersplash.utils.AnalysisHelper
+import com.juniperphoton.myersplash.di.AppComponent
 import okhttp3.OkHttpClient
 
 object OkHttpClientAPI {
@@ -13,11 +13,11 @@ object OkHttpClientAPI {
                     try {
                         val response = chain.proceed(request)
                         val durationMs = System.currentTimeMillis() - startMs
-                        AnalysisHelper.logDownloadSuccess(durationMs)
+                        AppComponent.instance.analysisHelper.logDownloadSuccess(durationMs)
                         return@addNetworkInterceptor response
                     } catch (e: Exception) {
                         val durationMs = System.currentTimeMillis() - startMs
-                        AnalysisHelper.logDownloadFailed(e, durationMs)
+                        AppComponent.instance.analysisHelper.logDownloadFailed(e, durationMs)
                         throw e
                     }
                 }

@@ -1,8 +1,10 @@
 package com.juniperphoton.myersplash.di
 
 import com.juniperphoton.myersplash.api.CloudService
+import com.juniperphoton.myersplash.api.IOService
 import com.juniperphoton.myersplash.api.PhotoService
-import com.juniperphoton.myersplash.api.ReportService
+import com.juniperphoton.myersplash.utils.AnalysisHelper
+import com.juniperphoton.myersplash.utils.AnalysisHelperImpl
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -16,7 +18,13 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideIOService(): ReportService {
+    fun provideIOService(): IOService {
         return CloudService.createService()
+    }
+
+    @Singleton
+    @Provides
+    fun provideAnalysisHelper(): AnalysisHelper {
+        return AnalysisHelperImpl()
     }
 }

@@ -19,8 +19,9 @@ import com.juniperphoton.myersplash.widget.DownloadCompleteView
 import com.juniperphoton.myersplash.widget.DownloadRetryView
 import com.juniperphoton.myersplash.widget.DownloadingView
 
-class DownloadsListAdapter(private val context: Context) :
-        RecyclerView.Adapter<DownloadsListAdapter.DownloadItemViewHolder>() {
+class DownloadsListAdapter(
+        private val context: Context
+) : RecyclerView.Adapter<DownloadsListAdapter.VH>() {
     companion object {
         private const val TAG = "DownloadsListAdapter"
         private const val ITEM_TYPE_ITEM = 0
@@ -45,18 +46,18 @@ class DownloadsListAdapter(private val context: Context) :
         return item.id.hashCode().toLong()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DownloadItemViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         return when (viewType) {
             ITEM_TYPE_ITEM -> {
                 val view = LayoutInflater.from(context)
                         .inflate(R.layout.row_download_item, parent, false)
-                DownloadItemViewHolder(view)
+                VH(view)
             }
             else -> throw IllegalArgumentException("unknown view type")
         }
     }
 
-    override fun onBindViewHolder(holder: DownloadItemViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: VH, position: Int) {
         holder.bind(data[holder.adapterPosition])
     }
 
@@ -73,7 +74,7 @@ class DownloadsListAdapter(private val context: Context) :
         notifyDataSetChanged()
     }
 
-    inner class DownloadItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private var draweeView: SimpleDraweeView? = itemView.findViewById(R.id.row_download_item_dv)
         private var flipperLayout: FlipperLayout? = itemView.findViewById(R.id.row_download_flipper_layout)
         private var downloadingView: DownloadingView? = itemView.findViewById(R.id.row_downloading_view)

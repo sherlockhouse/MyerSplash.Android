@@ -53,7 +53,7 @@ open class ImageListViewModel(application: Application
         images.observeForever(foreverObserver)
 
         backupImages?.let {
-            Pasteur.i(TAG) {
+            Pasteur.info(TAG) {
                 "restoring list: ${it.size}"
             }
             repo.onRestore(it)
@@ -95,7 +95,7 @@ open class ImageListViewModel(application: Application
             loadingMore = true
             repo.loadMore()
         } catch (e: Exception) {
-            Pasteur.w(TAG) {
+            Pasteur.warn(TAG) {
                 "error on loading more: $e"
             }
             _showLoadingMoreError.value = true.liveDataEvent
@@ -105,7 +105,7 @@ open class ImageListViewModel(application: Application
     }
 
     override fun onCleared() {
-        Pasteur.w(TAG) {
+        Pasteur.warn(TAG) {
             "on cleared"
         }
         images.removeObserver(foreverObserver)

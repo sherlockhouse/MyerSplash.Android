@@ -1,8 +1,8 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="97dp"
-    android:height="78dp"
+    android:height="79dp"
     android:viewportWidth="97"
-    android:viewportHeight="78">
+    android:viewportHeight="79">
     <path
         android:fillColor="#ffffff"
         android:name="weibo"

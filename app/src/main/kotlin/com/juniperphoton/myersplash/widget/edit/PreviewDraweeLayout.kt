@@ -5,6 +5,7 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
+import kotlin.math.max
 
 /**
  * A frame layout that handles content scaling and translation gesture.
@@ -31,7 +32,7 @@ class PreviewDraweeLayout(context: Context,
         val scaleX = screenWidth.toFloat() / width
         val scaleY = screenHeight.toFloat() / height
 
-        scrollBoundary.finalScale = Math.max(scaleX, scaleY)
+        scrollBoundary.finalScale = max(scaleX, scaleY)
         contentView.scaleX = scrollBoundary.finalScale
         contentView.scaleY = scrollBoundary.finalScale
     }

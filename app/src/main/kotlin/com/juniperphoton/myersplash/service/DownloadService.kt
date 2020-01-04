@@ -7,13 +7,16 @@ import android.net.Uri
 import android.os.IBinder
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
-import com.juniperphoton.myersplash.api.CloudService
-import com.juniperphoton.myersplash.db.AppDatabase
+import com.juniperphoton.myersplash.api.CloudService.DOWNLOAD_TIMEOUT_MS
+import com.juniperphoton.myersplash.api.IOService
+import com.juniperphoton.myersplash.db.DownloadItemDao
+import com.juniperphoton.myersplash.di.AppComponent
 import com.juniperphoton.myersplash.extension.notifyFileUpdated
 import com.juniperphoton.myersplash.extension.writeToFile
 import com.juniperphoton.myersplash.utils.*
 import kotlinx.coroutines.*
 import java.io.File
+import javax.inject.Inject
 
 class DownloadService : Service(), CoroutineScope by MainScope() {
     companion object {
@@ -25,7 +28,16 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
     // A map storing download url to downloading disposable object
     private val downloadUrlToJobMap = mutableMapOf<String, Job>()
 
-    private val dao = AppDatabase.instance.downloadItemDao()
+    @Inject
+    internal lateinit var dao: DownloadItemDao
+
+    @Inject
+    lateinit var service: IOService
+
+    override fun onCreate() {
+        super.onCreate()
+        AppComponent.instance.inject(this)
+    }
 
     @SuppressLint("CheckResult")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -64,9 +76,10 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
 
         Pasteur.info(TAG, "onHandleIntent")
 
+        val downloadUrl = intent.getStringExtra(Params.URL_KEY) ?: return
+        val fileName = intent.getStringExtra(Params.NAME_KEY) ?: return
+
         val cancelJob = intent.getBooleanExtra(Params.CANCELED_KEY, false)
-        val downloadUrl = intent.getStringExtra(Params.URL_KEY)
-        val fileName = intent.getStringExtra(Params.NAME_KEY)
         val previewUrl = intent.getStringExtra(Params.PREVIEW_URI)
         val isUnsplash = intent.getBooleanExtra(Params.IS_UNSPLASH_WALLPAPER, true)
         val fromRetry = intent.getIntExtra(Params.RETRY_KEY, 0)
@@ -114,7 +127,10 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
                 }
 
                 val file = DownloadUtils.getFileToSave(fileName)
-                val responseBody = CloudService.downloadPhoto(url)
+
+                val responseBody = withTimeout(DOWNLOAD_TIMEOUT_MS) {
+                    service.downloadFile(url)
+                }
 
                 Pasteur.d(TAG, "outputFile download onNext, " +
                         "size=${responseBody.contentLength()}")

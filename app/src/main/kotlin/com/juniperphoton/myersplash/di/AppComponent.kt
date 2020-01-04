@@ -1,5 +1,10 @@
 package com.juniperphoton.myersplash.di
 
+import com.juniperphoton.myersplash.api.IOService
+import com.juniperphoton.myersplash.broadcastreceiver.WallpaperWidgetProvider
+import com.juniperphoton.myersplash.service.DownloadService
+import com.juniperphoton.myersplash.utils.AnalysisHelper
+import com.juniperphoton.myersplash.utils.DownloadReporter
 import com.juniperphoton.myersplash.viewmodel.DownloadListViewModel
 import com.juniperphoton.myersplash.viewmodel.ImageDetailViewModel
 import dagger.Component
@@ -17,6 +22,12 @@ abstract class AppComponent {
         }
     }
 
+    abstract val reporter: DownloadReporter
+    abstract val ioService: IOService
+    abstract val analysisHelper: AnalysisHelper
+
     abstract fun inject(vm: DownloadListViewModel)
     abstract fun inject(vm: ImageDetailViewModel)
+    abstract fun inject(service: DownloadService)
+    abstract fun inject(receiver: WallpaperWidgetProvider)
 }

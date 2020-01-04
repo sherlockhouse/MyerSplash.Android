@@ -5,6 +5,7 @@ import android.content.Intent
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.db.AppDatabase
+import com.juniperphoton.myersplash.di.AppComponent
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.service.DownloadService
@@ -48,7 +49,7 @@ object DownloadUtils {
         image.listUrl?.let {
             previewFile = FileUtils.getCachedFile(it)
         }
-        DownloadReporter.report(image.downloadLocationLink)
+        AppComponent.instance.reporter.report(image.downloadLocationLink)
         startDownloadService(context, image.fileNameForDownload, image.downloadUrl!!, previewFile?.path)
         persistDownloadItem(context, image)
         Toaster.sendShortToast(context.getString(R.string.downloading_in_background))
