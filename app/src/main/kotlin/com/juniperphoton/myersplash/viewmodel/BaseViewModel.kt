@@ -9,6 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 
+@Suppress("LeakingThis")
 abstract class BaseViewModel(application: Application
 ) : AndroidViewModel(application), CoroutineScope by MainScope() {
     protected val app = getApplication<App>()

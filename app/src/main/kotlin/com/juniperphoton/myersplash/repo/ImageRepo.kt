@@ -34,7 +34,7 @@ abstract class ImageRepo {
     }
 
     suspend fun refresh() {
-        Pasteur.i(TAG) {
+        Pasteur.info(TAG) {
             "start refresh: $this"
         }
 
@@ -47,7 +47,7 @@ abstract class ImageRepo {
 
             page++
         } catch (e: Exception) {
-            Pasteur.w(TAG) {
+            Pasteur.warn(TAG) {
                 "error on refresh"
             }
             throw e
@@ -55,7 +55,7 @@ abstract class ImageRepo {
     }
 
     suspend fun loadMore() {
-        Pasteur.i(TAG) {
+        Pasteur.info(TAG) {
             "start load more: $this"
         }
 
@@ -67,7 +67,7 @@ abstract class ImageRepo {
 
             page++
         } catch (e: Exception) {
-            Pasteur.w(TAG) {
+            Pasteur.warn(TAG) {
                 "error on load more"
             }
             throw e

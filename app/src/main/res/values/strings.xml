@@ -5,8 +5,8 @@
     <string name="appbar_scrolling_view_behavior" translatable="false">com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior</string>
 
     <string name="settings_credit_content">Photos are from Unsplash, an amazing website providing free high-resolution photos.</string>
-    <string name="settings_saving_quality">Save</string>
-    <string name="settings_loading_quality">Thumbnails</string>
+    <string name="settings_saving_quality">Download Quality</string>
+    <string name="settings_loading_quality">Browsing Quality</string>
     <string name="settings_clean_up_cache">Clean up cache</string>
 
     <string name="settings_quick_download">Show download button in list</string>

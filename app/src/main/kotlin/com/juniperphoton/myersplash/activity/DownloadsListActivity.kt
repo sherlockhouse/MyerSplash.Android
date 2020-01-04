@@ -10,12 +10,12 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.DownloadsListAdapter
+import com.juniperphoton.myersplash.di.AppComponent
 import com.juniperphoton.myersplash.extension.setVisible
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.restore.restorePosition
 import com.juniperphoton.myersplash.restore.savePosition
 import com.juniperphoton.myersplash.service.DownloadService
-import com.juniperphoton.myersplash.utils.AnalysisHelper
 import com.juniperphoton.myersplash.utils.NotificationUtils
 import com.juniperphoton.myersplash.utils.Params
 import com.juniperphoton.myersplash.utils.Pasteur
@@ -60,7 +60,7 @@ class DownloadsListActivity : BaseActivity(), DownloadsListAdapter.Callback, Cor
 
         viewModel = AppViewModelProviders.of(this).get(DownloadListViewModel::class.java)
 
-        AnalysisHelper.logEnterDownloads()
+        AppComponent.instance.analysisHelper.logEnterDownloads()
 
         moreFab.setOnClickListener(this)
 
@@ -77,7 +77,7 @@ class DownloadsListActivity : BaseActivity(), DownloadsListAdapter.Callback, Cor
         updateNoItemVisibility()
 
         viewModel.downloadItems.observe(this, Observer { items ->
-            Pasteur.i(TAG) {
+            Pasteur.info(TAG) {
                 "refresh items: ${items.size}"
             }
             adapter.refresh(items)
@@ -116,7 +116,7 @@ class DownloadsListActivity : BaseActivity(), DownloadsListAdapter.Callback, Cor
     }
 
     private fun onClickMore() {
-        AnalysisHelper.logClickMoreButtonInDownloadList()
+        AppComponent.instance.analysisHelper.logClickMoreButtonInDownloadList()
 
         AlertDialog.Builder(this).setTitle(R.string.clear_options_title)
                 .setItems(R.array.delete_options) { _, i ->

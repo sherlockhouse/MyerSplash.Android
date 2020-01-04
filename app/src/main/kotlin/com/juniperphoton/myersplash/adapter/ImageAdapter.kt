@@ -168,7 +168,7 @@ class ImageAdapter(
     }
 
     fun refresh(list: List<UnsplashImage>, animated: Boolean = true) {
-        Pasteur.i(TAG) {
+        Pasteur.info(TAG) {
             "refresh with new list: ${list.size}"
         }
 

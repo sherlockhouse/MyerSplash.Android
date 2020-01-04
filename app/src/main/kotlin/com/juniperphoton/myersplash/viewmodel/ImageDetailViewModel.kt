@@ -9,11 +9,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.juniperphoton.myersplash.LiveDataEvent
 import com.juniperphoton.myersplash.R
+import com.juniperphoton.myersplash.di.AppComponent
 import com.juniperphoton.myersplash.liveDataEvent
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.repo.DetailImageRepo
-import com.juniperphoton.myersplash.utils.AnalysisHelper
 import com.juniperphoton.myersplash.utils.DownloadUtils
 import io.reactivex.Flowable
 import kotlinx.coroutines.runBlocking
@@ -69,14 +69,14 @@ class ImageDetailViewModel(app: Application) : BaseViewModel(app) {
     }
 
     fun download() {
-        AnalysisHelper.logClickDownloadInDetails()
+        AppComponent.instance.analysisHelper.logClickDownloadInDetails()
         unsplashImage?.let {
             DownloadUtils.download(app, it)
         }
     }
 
     fun cancelDownload(): Boolean = runBlocking {
-        AnalysisHelper.logClickCancelDownloadInDetails()
+        AppComponent.instance.analysisHelper.logClickCancelDownloadInDetails()
         val image = unsplashImage ?: return@runBlocking false
 
         repo.setStatusById(image.id!!, DownloadItem.DOWNLOAD_STATUS_FAILED)
@@ -86,7 +86,7 @@ class ImageDetailViewModel(app: Application) : BaseViewModel(app) {
     }
 
     fun setAs() {
-        AnalysisHelper.logClickSetAsInDetails()
+        AppComponent.instance.analysisHelper.logClickSetAsInDetails()
         val url = "${downloadItem?.filePath}"
         _launchEdit.value = Uri.fromFile(File(url)).liveDataEvent
     }

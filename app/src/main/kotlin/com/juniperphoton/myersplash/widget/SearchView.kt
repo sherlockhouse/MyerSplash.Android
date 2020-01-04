@@ -135,7 +135,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
     }
 
     private fun initCategoryList() {
-        categoryAdapter = CategoryAdapter(context, CategoryAdapter.KEYWORDS)
+        categoryAdapter = CategoryAdapter(context, CategoryAdapter.builtInKeywords)
         categoryAdapter!!.onClickItem = { name ->
             val trimmedEmoji = name.substring(3, name.length)
             editText.setText(trimmedEmoji, TextView.BufferType.EDITABLE)

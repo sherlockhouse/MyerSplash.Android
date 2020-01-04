@@ -35,6 +35,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.juniperphoton.flipperlayout.FlipperLayout
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.activity.EditActivity
+import com.juniperphoton.myersplash.di.AppComponent
 import com.juniperphoton.myersplash.extension.*
 import com.juniperphoton.myersplash.misc.Action
 import com.juniperphoton.myersplash.model.DownloadItem
@@ -48,6 +49,7 @@ import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.*
 import java.io.File
 import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 
 @Suppress("unused")
 class ImageDetailView(context: Context, attrs: AttributeSet
@@ -243,7 +245,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
                     val dx = e.rawX - downX
                     val dy = e.rawY - downY
 
-                    if (Math.abs(dx) >= MOVE_THRESHOLD || Math.abs(dy) >= MOVE_THRESHOLD) {
+                    if (abs(dx) >= MOVE_THRESHOLD || abs(dy) >= MOVE_THRESHOLD) {
                         toggleFadeAnimation(false)
                     }
 
@@ -255,7 +257,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
                         return@setOnTouchListener false
                     }
 
-                    if (Math.abs(e.rawY - downY) >= RESET_THRESHOLD || Math.abs(e.rawX - downX) >= RESET_THRESHOLD) {
+                    if (abs(e.rawY - downY) >= RESET_THRESHOLD || abs(e.rawX - downX) >= RESET_THRESHOLD) {
                         tryHide()
                     } else {
                         detailImgRL.animate().translationX(startX).translationY(startY).setDuration(ANIMATION_DURATION_FAST_MILLIS).start()
@@ -499,7 +501,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
 
         copyUrlFlipperLayout.next()
 
-        AnalysisHelper.logClickCopyUrl()
+        AppComponent.instance.analysisHelper.logClickCopyUrl()
 
         viewModel.copyUrlToClipboard()
         delay(URL_COPIED_DELAY_MILLIS)
@@ -607,7 +609,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
      * @param itemView      clicked view
      */
     fun show(rectF: RectF, unsplashImage: UnsplashImage, itemView: View) {
-        AnalysisHelper.logToggleImageDetails()
+        AppComponent.instance.analysisHelper.logToggleImageDetails()
 
         if (clickedView != null) {
             return

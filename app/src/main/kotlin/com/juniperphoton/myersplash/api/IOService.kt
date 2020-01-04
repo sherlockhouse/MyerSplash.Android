@@ -5,11 +5,11 @@ import retrofit2.http.GET
 import retrofit2.http.Streaming
 import retrofit2.http.Url
 
-interface ReportService {
+interface IOService {
     @Streaming
     @GET
-    suspend fun downloadFileAsync(@Url fileUrl: String): ResponseBody
+    suspend fun downloadFile(@Url fileUrl: String): ResponseBody
 
     @GET
-    suspend fun reportDownloadAsync(@Url url: String): ResponseBody
+    suspend fun reportDownload(@Url url: String): ResponseBody
 }

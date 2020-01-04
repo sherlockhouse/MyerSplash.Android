@@ -4,7 +4,7 @@
     <string name="settings_title">设置</string>
     <string name="settings_credit_content">图片来自 Unsplash，一个无版权可免费商用的网站。“每日推荐” 里，有部分照片来自我自己的摄影作品 :P</string>
     <string name="settings_saving_quality">保存质量</string>
-    <string name="settings_loading_quality">列表图片质量</string>
+    <string name="settings_loading_quality">浏览质量</string>
     <string name="settings_clean_up_cache">清理缓存</string>
     <string name="settings_quick_download">列表里显示下载按钮</string>
     <string name="settings_quick_download_title">快速下载</string>

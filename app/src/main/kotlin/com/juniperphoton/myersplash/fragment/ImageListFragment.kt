@@ -101,7 +101,7 @@ class ImageListFragment : Fragment() {
             images.observe(this@ImageListFragment, Observer { images ->
                 images ?: return@Observer
 
-                Pasteur.i(TAG) {
+                Pasteur.info(TAG) {
                     "refresh, $this"
                 }
 
@@ -155,7 +155,7 @@ class ImageListFragment : Fragment() {
 
         adapter = ImageAdapter(view.context).apply {
             onClickQuickDownload = { image ->
-                AnalysisHelper.logClickDownloadInList()
+                AppComponent.instance.analysisHelper.logClickDownloadInList()
                 download(image)
             }
             onClickPhoto = { r, i, v ->
@@ -179,6 +179,7 @@ class ImageListFragment : Fragment() {
         }
 
         refreshLayout.setOnRefreshListener {
+            AppComponent.instance.analysisHelper.logRefreshList()
             viewModel.refresh()
         }
 

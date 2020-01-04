@@ -8,6 +8,7 @@ import android.view.ViewConfiguration
 import android.widget.OverScroller
 import androidx.core.view.ViewCompat
 import com.juniperphoton.myersplash.utils.Pasteur
+import kotlin.math.abs
 
 /**
  * Helper class to scroll the [contentView] and perform fling and overscroll.
@@ -76,7 +77,7 @@ class ImagePreviewAttacher(context: Context,
 
         Pasteur.i(TAG, "xVelocity: $xVelocity")
 
-        if (Math.abs(xVelocity) < minimumFlingVelocity) {
+        if (abs(xVelocity) < minimumFlingVelocity) {
             springBack()
         } else {
             fling(xVelocity)

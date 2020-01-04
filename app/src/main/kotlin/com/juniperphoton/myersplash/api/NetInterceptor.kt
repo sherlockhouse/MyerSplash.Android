@@ -5,7 +5,7 @@ import com.juniperphoton.myersplash.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.Response
 
-class CustomInterceptor : Interceptor {
+class NetInterceptor : Interceptor {
     companion object {
         private const val CLIENT_ID = "client_id"
     }
