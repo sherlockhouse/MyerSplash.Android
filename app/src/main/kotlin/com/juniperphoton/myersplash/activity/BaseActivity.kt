@@ -71,6 +71,7 @@ abstract class BaseActivity : AppCompatActivity(), View.OnApplyWindowInsetsListe
     }
 
     open fun onConfigStatusBar() {
+        // todo fix this
         findViewById<View>(R.id.status_bar_placeholder)?.updateDimensions(
                 ViewGroup.LayoutParams.MATCH_PARENT, getStatusBarHeight())
     }

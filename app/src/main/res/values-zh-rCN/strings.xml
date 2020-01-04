@@ -4,7 +4,7 @@
     <string name="settings_title">设置</string>
     <string name="settings_credit_content">图片来自 Unsplash，一个无版权可免费商用的网站。“每日推荐” 里，有部分照片来自我自己的摄影作品 :P</string>
     <string name="settings_saving_quality">保存质量</string>
-    <string name="settings_loading_quality">列表图片质量</string>
+    <string name="settings_loading_quality">浏览质量</string>
     <string name="settings_clean_up_cache">清理缓存</string>
     <string name="settings_quick_download">列表里显示下载按钮</string>
     <string name="settings_quick_download_title">快速下载</string>
@@ -32,7 +32,7 @@
     <string name="settingsLowercase">设置</string>
     <string name="aboutLowercase">关于</string>
     <string name="random">随机</string>
-    <string name="search_in_english">请用英文搜索</string>
+    <string name="search_in_english">请尽量使用英文搜索</string>
     <string name="no_item">没有内容</string>
     <string name="search_by_other_keywords">通过其他关键字搜索</string>
     <string name="return_to_content">返回到 %s</string>
@@ -79,6 +79,7 @@
     <string name="recommended_tag">今日推荐</string>
     <string name="copied_tag">成功复制了</string>
     <string name="pivot_new">编辑推荐</string>
+    <string name="pivot_random">随机</string>
     <string name="pivot_developer">开发者</string>
     <string name="pivot_highlights">每日推荐</string>
     <string name="delete_downloading">删除正在下载的内容</string>

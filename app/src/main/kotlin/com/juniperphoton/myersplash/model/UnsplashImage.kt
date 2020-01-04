@@ -1,14 +1,15 @@
 package com.juniperphoton.myersplash.model
 
+import android.app.Activity
+import android.content.Context
 import android.graphics.Color
 import com.google.gson.annotations.SerializedName
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
-import java.io.Serializable
 
 @Suppress("unused")
-class UnsplashImage : Serializable {
+class UnsplashImage {
     companion object {
         private val savingQualitySettingsKey = App.instance.getString(R.string.preference_key_saving_quality)
         private val listQualitySettingsKey = App.instance.getString(R.string.preference_key_list_quality)
@@ -16,7 +17,6 @@ class UnsplashImage : Serializable {
 
     @SerializedName("id")
     var id: String? = null
-        internal set
 
     @SerializedName("created_at")
     private val createdAt: String? = null
@@ -28,13 +28,13 @@ class UnsplashImage : Serializable {
     private val likes: Int = 0
 
     @SerializedName("user")
-    internal var user: UnsplashUser? = null
+    var user: UnsplashUser? = null
 
     @SerializedName("urls")
-    internal var urls: ImageUrl? = null
+    var urls: UnsplashImageUrl? = null
 
     @SerializedName("links")
-    private var links: ImageLinks? = null
+    private val links: UnsplashImageLinks? = null
 
     @SerializedName("width")
     var width = 0
@@ -46,10 +46,8 @@ class UnsplashImage : Serializable {
         get() = links?.downloadLocation
 
     var isUnsplash: Boolean = true
-        internal set
 
     var showTodayTag: Boolean = false
-        internal set
 
     val fileNameForDownload: String
         get() = "${user!!.name} - $id - $tagForDownloadUrl"
@@ -100,12 +98,52 @@ class UnsplashImage : Serializable {
         }
 }
 
-class ImageLinks : Serializable {
+fun UnsplashImage.getDisplayRatioF(context: Context): Float {
+    val ratioStr = getDisplayRatio(context)
+    val array = ratioStr.split(":")
+    val w = array.getOrNull(0)?.toFloatOrNull() ?: 3f
+    val h = array.getOrNull(1)?.toFloatOrNull() ?: 2f
+    return w / h
+}
+
+@Suppress("UnnecessaryVariable")
+fun UnsplashImage.getDisplayRatio(context: Context): String {
+    if (context is Activity) {
+        val fixedInfoHeight = context.resources
+                .getDimensionPixelSize(R.dimen.img_detail_info_height)
+
+        val fixedMargin = context.resources
+                .getDimensionPixelSize(R.dimen.detail_fixed_top_bottom_margin)
+
+        val decorViewWidth = context.window.decorView.width
+        val decorViewHeight = context.window.decorView.height
+
+        val availableHeight = decorViewHeight - fixedMargin * 2
+
+        val imageRatio = this.width / this.height.toFloat()
+        val wantedWidth = decorViewWidth
+        val wantedHeight = (wantedWidth / imageRatio) + fixedInfoHeight
+
+        val targetWidth = wantedWidth
+        var targetHeight = wantedHeight
+        if (wantedHeight > availableHeight) {
+            targetHeight = availableHeight.toFloat() - fixedInfoHeight
+        } else {
+            targetHeight -= fixedInfoHeight
+        }
+
+        return "$targetWidth:$targetHeight"
+    } else {
+        return "3:2"
+    }
+}
+
+class UnsplashImageLinks {
     @SerializedName("download_location")
     var downloadLocation: String? = null
 }
 
-class ImageUrl : Serializable {
+class UnsplashImageUrl {
     @SerializedName("raw")
     var raw: String? = null
 

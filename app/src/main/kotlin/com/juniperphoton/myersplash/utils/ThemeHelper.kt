@@ -4,12 +4,9 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 import com.juniperphoton.myersplash.R
 
-/**
- * @author JuniperPhoton @ Zhihu Inc.
- * @since 2019-09-10
- */
 object ThemeHelper {
-    fun currentTheme(context: Context): Int {
+    @Suppress("MemberVisibilityCanBePrivate")
+    fun getCurrentTheme(context: Context): Int {
         return when (LocalSettingHelper.getInt(context, context.getString(R.string.preference_key_theme), 2)) {
             0 -> AppCompatDelegate.MODE_NIGHT_YES
             1 -> AppCompatDelegate.MODE_NIGHT_NO
@@ -18,7 +15,7 @@ object ThemeHelper {
     }
 
     fun switchTheme(context: Context) {
-        AppCompatDelegate.setDefaultNightMode(currentTheme(context))
+        AppCompatDelegate.setDefaultNightMode(getCurrentTheme(context))
     }
 
     fun isDark(): Boolean {

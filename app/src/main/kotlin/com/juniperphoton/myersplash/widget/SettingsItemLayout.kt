@@ -33,7 +33,7 @@ class SettingsItemLayout(context: Context, attrs: AttributeSet) : FrameLayout(co
     @BindView(R.id.divider_view)
     lateinit var dividerView: View
 
-    var onCheckedChanged: OnCheckedListener? = null
+    private var onCheckedChanged: OnCheckedListener? = null
 
     var title: String = ""
         set(value) {
@@ -47,7 +47,7 @@ class SettingsItemLayout(context: Context, attrs: AttributeSet) : FrameLayout(co
             field = value
         }
 
-    var preferenceKey: String? = null
+    private var preferenceKey: String? = null
 
     init {
         LayoutInflater.from(context).inflate(R.layout.row_settings_item, this, true)

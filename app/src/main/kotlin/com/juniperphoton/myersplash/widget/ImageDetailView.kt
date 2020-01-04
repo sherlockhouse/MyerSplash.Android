@@ -8,7 +8,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.RectF
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.util.AttributeSet
@@ -21,11 +20,13 @@ import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.annotation.UiThread
+import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentActivity
+import androidx.core.content.FileProvider
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -34,12 +35,17 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.juniperphoton.flipperlayout.FlipperLayout
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.activity.EditActivity
+import com.juniperphoton.myersplash.di.AppComponent
 import com.juniperphoton.myersplash.extension.*
-import com.juniperphoton.myersplash.fragment.Action
+import com.juniperphoton.myersplash.misc.Action
+import com.juniperphoton.myersplash.misc.guard
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
+import com.juniperphoton.myersplash.model.getDisplayRatio
+import com.juniperphoton.myersplash.model.getDisplayRatioF
 import com.juniperphoton.myersplash.utils.*
-import com.juniperphoton.myersplash.view.ImageDetailViewContract
+import com.juniperphoton.myersplash.viewmodel.AppViewModelProviders
+import com.juniperphoton.myersplash.viewmodel.ClickData
 import com.juniperphoton.myersplash.viewmodel.ImageDetailViewModel
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -47,10 +53,11 @@ import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.*
 import java.io.File
 import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 
 @Suppress("unused")
 class ImageDetailView(context: Context, attrs: AttributeSet
-) : FrameLayout(context, attrs), ImageDetailViewContract {
+) : FrameLayout(context, attrs) {
     companion object {
         private const val TAG = "ImageDetailView"
         private const val RESULT_CODE = 10000
@@ -99,7 +106,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
     lateinit var detailRootScrollView: ViewGroup
 
     @BindView(R.id.detail_hero_view)
-    lateinit var heroView: SimpleDraweeView
+    lateinit var photoView: SimpleDraweeView
 
     @BindView(R.id.detail_backgrd_rl)
     lateinit var detailInfoRootLayout: ViewGroup
@@ -160,6 +167,14 @@ class ImageDetailView(context: Context, attrs: AttributeSet
     private var animating: Boolean = false
     private var copied: Boolean = false
 
+    private var downX: Float = 0f
+    private var downY: Float = 0f
+
+    private var startX: Float = 0f
+    private var startY: Float = 0f
+
+    private var pointerDown: Boolean = false
+
     init {
         LayoutInflater.from(context).inflate(R.layout.detail_content, this, true)
         ButterKnife.bind(this, this)
@@ -169,8 +184,27 @@ class ImageDetailView(context: Context, attrs: AttributeSet
 
     @SuppressLint("ClickableViewAccessibility")
     private fun initDetailViews() {
-        viewModel = ViewModelProviders.of(context as FragmentActivity).get(ImageDetailViewModel::class.java)
-        viewModel.viewContract = this
+        val activity = context as AppCompatActivity
+
+        viewModel = AppViewModelProviders.of(activity)
+                .get(ImageDetailViewModel::class.java)
+                .apply {
+                    navigateToAuthorPage.observe(activity, Observer { e ->
+                        e?.consume {
+                            navigateToAuthorPage(it)
+                        }
+                    })
+                    share.observe(activity, Observer { e ->
+                        e?.consume {
+                            doShare(it)
+                        }
+                    })
+                    launchEdit.observe(activity, Observer { e ->
+                        e?.consume {
+                            launchEditActivity(it)
+                        }
+                    })
+                }
 
         detailRootScrollView.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_UP) {
@@ -194,7 +228,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
             start()
         }
 
-        heroView.setOnTouchListener { _, e ->
+        photoView.setOnTouchListener { _, e ->
             if (animating) {
                 return@setOnTouchListener false
             }
@@ -223,7 +257,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
                     val dx = e.rawX - downX
                     val dy = e.rawY - downY
 
-                    if (Math.abs(dx) >= MOVE_THRESHOLD || Math.abs(dy) >= MOVE_THRESHOLD) {
+                    if (abs(dx) >= MOVE_THRESHOLD || abs(dy) >= MOVE_THRESHOLD) {
                         toggleFadeAnimation(false)
                     }
 
@@ -235,7 +269,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
                         return@setOnTouchListener false
                     }
 
-                    if (Math.abs(e.rawY - downY) >= RESET_THRESHOLD || Math.abs(e.rawX - downX) >= RESET_THRESHOLD) {
+                    if (abs(e.rawY - downY) >= RESET_THRESHOLD || abs(e.rawX - downX) >= RESET_THRESHOLD) {
                         tryHide()
                     } else {
                         detailImgRL.animate().translationX(startX).translationY(startY).setDuration(ANIMATION_DURATION_FAST_MILLIS).start()
@@ -248,14 +282,6 @@ class ImageDetailView(context: Context, attrs: AttributeSet
             true
         }
     }
-
-    private var downX: Float = 0f
-    private var downY: Float = 0f
-
-    private var startX: Float = 0f
-    private var startY: Float = 0f
-
-    private var pointerDown: Boolean = false
 
     private fun toggleFadeAnimation(show: Boolean) {
         if (show) {
@@ -320,21 +346,26 @@ class ImageDetailView(context: Context, attrs: AttributeSet
     }
 
     private fun checkDownloadStatus(item: DownloadItem): Boolean {
-        val file = File(item.filePath)
+        val path = item.filePath ?: return false
+
+        val file = File(path)
         return file.exists() && file.canRead()
     }
 
-    private val targetY: Float
-        get() {
-            val decorView = (context as Activity).window.decorView
-            val height = decorView.height
-            val width = decorView.width
-            val detailHeight = (width / (3 / 2f)).toInt() +
-                    context.resources.getDimensionPixelSize(R.dimen.img_detail_info_height)
-            return (height - detailHeight) / 2f
-        }
+    private fun getTargetY(ratio: Float): Float {
+        val decorView = (context as Activity).window.decorView
+        val height = decorView.height
+        val width = decorView.width
+        val detailHeight = (width / ratio).toInt() +
+                context.resources.getDimensionPixelSize(R.dimen.img_detail_info_height)
+        return (height - detailHeight) / 2f
+    }
 
     private fun toggleDetailRLAnimation(show: Boolean, oneshot: Boolean) {
+        Pasteur.info(TAG) {
+            "toggleDetailRLAnimation, show: $show, oneshot: $oneshot"
+        }
+
         val startY = if (show) -resources.getDimensionPixelSize(R.dimen.img_detail_info_height) else 0
         val endY = if (show) 0 else -resources.getDimensionPixelSize(R.dimen.img_detail_info_height)
 
@@ -479,7 +510,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
 
         copyUrlFlipperLayout.next()
 
-        AnalysisHelper.logClickCopyUrl()
+        AppComponent.instance.analysisHelper.logClickCopyUrl()
 
         viewModel.copyUrlToClipboard()
         delay(URL_COPIED_DELAY_MILLIS)
@@ -490,6 +521,22 @@ class ImageDetailView(context: Context, attrs: AttributeSet
     @OnClick(R.id.detail_share_fab)
     fun onClickShare() {
         viewModel.share()
+    }
+
+    private fun doShare(image: UnsplashImage) {
+        val context = context ?: return
+
+        val file = FileUtils.getCachedFile(image.listUrl!!)
+
+        if (file == null || !file.exists()) {
+            Toaster.sendShortToast(context.getString(R.string.something_wrong))
+            return
+        }
+
+        val shareText = context.getString(R.string.share_text, image.userName, image.downloadUrl)
+        val contentUri = FileProvider.getUriForFile(context,
+                context.getString(R.string.authorities), file)
+        launchShare(contentUri, shareText)
     }
 
     @OnClick(R.id.detail_download_fab)
@@ -524,13 +571,13 @@ class ImageDetailView(context: Context, attrs: AttributeSet
         viewModel.setAs()
     }
 
-    override fun launchEditActivity(uri: Uri) {
+    private fun launchEditActivity(uri: Uri) {
         val intent = Intent(context, EditActivity::class.java)
         intent.putExtra(Intent.EXTRA_STREAM, uri)
         context.startActivity(intent)
     }
 
-    override fun navigateToAuthorPage(url: String) {
+    private fun navigateToAuthorPage(url: String) = guard {
         val uri = Uri.parse(url)
 
         val intentBuilder = CustomTabsIntent.Builder()
@@ -546,7 +593,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
         customTabsIntent.launchUrl(context, uri)
     }
 
-    override fun launchShare(uri: Uri, text: String) {
+    private fun launchShare(uri: Uri, text: String) {
         val intent = Intent(Intent.ACTION_SEND)
 
         intent.apply {
@@ -566,23 +613,31 @@ class ImageDetailView(context: Context, attrs: AttributeSet
 
     /**
      * Show detailed image
-     * @param rectF         rect of original image position
-     * @param unsplashImage clicked image
-     * @param itemView      clicked view
+     * @param clickData    clicked data info, including the rectF of clicked area and image.
      */
-    fun show(rectF: RectF, unsplashImage: UnsplashImage, itemView: View) {
-        AnalysisHelper.logToggleImageDetails()
+    fun show(clickData: ClickData) {
+        val (rectF, unsplashImage, itemView) = clickData
+
+        AppComponent.instance.analysisHelper.logToggleImageDetails()
 
         if (clickedView != null) {
             return
         }
 
+        val lp = photoView.layoutParams as ConstraintLayout.LayoutParams
+        lp.dimensionRatio = unsplashImage.getDisplayRatio(context)
+        photoView.layoutParams = lp
+
+        photoView.setImageURI(unsplashImage.listUrl)
+
+        scope?.cancel()
         scope = CoroutineScope(Dispatchers.Main)
 
         viewModel.unsplashImage = unsplashImage
 
-        clickedView = itemView
-        clickedView!!.visibility = View.INVISIBLE
+        clickedView = itemView.apply {
+            visibility = View.INVISIBLE
+        }
 
         val themeColor = unsplashImage.themeColor
 
@@ -599,8 +654,6 @@ class ImageDetailView(context: Context, attrs: AttributeSet
 
         nameTextView.text = unsplashImage.userName
         progressView.progress = 5
-
-        heroView.setImageURI(unsplashImage.listUrl)
         detailRootScrollView.visibility = View.VISIBLE
 
         val heroImagePosition = IntArray(2)
@@ -625,7 +678,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet
                 }
 
         toggleMaskAnimation(true)
-        toggleHeroViewAnimation(listPositionY, targetY, true)
+        toggleHeroViewAnimation(listPositionY, getTargetY(unsplashImage.getDisplayRatioF(context)), true)
     }
 
     @UiThread

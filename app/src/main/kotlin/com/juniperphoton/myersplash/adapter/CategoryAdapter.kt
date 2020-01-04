@@ -13,9 +13,9 @@ typealias OnClickCategoryItemListener = ((string: String) -> Unit)
 
 class CategoryAdapter(private val context: Context,
                       private val list: Array<String>
-) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
-    companion object ResMap {
-        val KEYWORDS: Array<String> = App.instance.resources.getStringArray(R.array.search_category)
+) : RecyclerView.Adapter<CategoryAdapter.VH>() {
+    companion object {
+        val builtInKeywords: Array<String> = App.instance.resources.getStringArray(R.array.search_category)
     }
 
     /**
@@ -23,17 +23,17 @@ class CategoryAdapter(private val context: Context,
      */
     var onClickItem: OnClickCategoryItemListener? = null
 
-    override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: VH, position: Int) {
         holder.bind(list[holder.adapterPosition])
     }
 
     override fun getItemCount(): Int = list.size
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
-        return CategoryViewHolder(LayoutInflater.from(context).inflate(R.layout.row_search_category, parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+        return VH(LayoutInflater.from(context).inflate(R.layout.row_search_category, parent, false))
     }
 
-    inner class CategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private var categoryName: TextView = itemView.findViewById(R.id.category_text)
 
         private var category: String? = null

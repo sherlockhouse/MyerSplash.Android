@@ -22,6 +22,7 @@ import com.facebook.imagepipeline.request.ImageRequestBuilder
 import com.juniperphoton.flipperlayout.FlipperLayout
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
+import com.juniperphoton.myersplash.di.AppComponent
 import com.juniperphoton.myersplash.extension.getScreenHeight
 import com.juniperphoton.myersplash.extension.updateIndex
 import com.juniperphoton.myersplash.utils.*
@@ -96,13 +97,13 @@ class EditActivity : BaseActivity() {
     }
 
     private fun onClickConfirm() {
-        AnalysisHelper.logApplyEdit(brightnessSeekBar.progress > 0)
+        AppComponent.instance.analysisHelper.logApplyEdit(brightnessSeekBar.progress > 0)
         composeMask()
     }
 
     private fun onClickPreview() {
         if (!showingPreview) {
-            AnalysisHelper.logEditShowPreview()
+            AppComponent.instance.analysisHelper.logEditShowPreview()
         }
         showingPreview = !showingPreview
     }

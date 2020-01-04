@@ -3,6 +3,7 @@
     <color name="primaryBackgroundColor">#FFFFFF</color>
     <color name="primaryHalfBackgroundColor">#C4FFFFFF</color>
     <color name="primaryTextColor">#161616</color>
+    <color name="primaryUnselectedColor">#5E161616</color>
     <color name="primaryRevTextColor">#FFFFFF</color>
     <color name="rippleColor">#1D000000</color>
     <color name="MaskColor">#74FFFFFF</color>
@@ -24,4 +25,7 @@
     <color name="ShadowColor">#2f000000</color>
     <color name="highlightFallbackColor0">#9c9c9c</color>
     <color name="highlightFallbackColor1">#525252</color>
+
+    <color name="overlay_image">#00FFFFFF</color>
+    <color name="search_background">#FAFAFA</color>
 </resources>

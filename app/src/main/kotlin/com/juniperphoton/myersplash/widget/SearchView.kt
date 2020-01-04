@@ -2,6 +2,7 @@ package com.juniperphoton.myersplash.widget
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.annotation.SuppressLint
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
@@ -24,11 +25,10 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.material.appbar.AppBarLayout
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.CategoryAdapter
-import com.juniperphoton.myersplash.contract.DaggerRepoComponent
-import com.juniperphoton.myersplash.contract.RepoModule
-import com.juniperphoton.myersplash.fragment.MainListFragment
-import com.juniperphoton.myersplash.presenter.MainListPresenter
+import com.juniperphoton.myersplash.fragment.ImageListFragment
+import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.utils.Toaster
+import kotlin.math.abs
 
 @Suppress("unused")
 class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
@@ -44,9 +44,6 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
 
     @BindView(R.id.search_result_root)
     lateinit var resultRoot: FrameLayout
-
-    @BindView(R.id.search_detail_view)
-    lateinit var detailView: ImageDetailView
 
     @BindView(R.id.detail_search_btn)
     lateinit var searchBtn: View
@@ -68,7 +65,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
 
     private var categoryAdapter: CategoryAdapter? = null
 
-    private var mainListFragment: MainListFragment? = null
+    private var mainListFragment: ImageListFragment? = null
     private var animating: Boolean = false
 
     init {
@@ -95,7 +92,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
             override fun afterTextChanged(s: Editable) {
                 if (editText.text != null && editText.text.toString() != "") {
                     if (searchBtn.scaleX != 1f) {
-                        toggleSearchButtons(true, true)
+                        toggleSearchButtons(show = true, animation = true)
                     }
                 } else {
                     if (searchBtn.scaleX != 0f) {
@@ -105,36 +102,44 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
             }
         })
 
-        val activity = context as AppCompatActivity
-
-        val presenter = MainListPresenter()
-
-        mainListFragment = MainListFragment().apply {
-            this.presenter = presenter
-            onClickPhotoItem = { rectF, unsplashImage, itemView ->
-                detailView.show(rectF, unsplashImage, itemView)
-            }
-        }
-
-        val component = DaggerRepoComponent.builder().repoModule(RepoModule(context, -1, mainListFragment!!)).build()
-        component.inject(presenter)
-
-        activity.supportFragmentManager.beginTransaction().replace(R.id.search_result_root, mainListFragment!!)
-                .commit()
-
         appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
-            val fraction = Math.abs(verticalOffset) * 1.0f / appBarLayout.height
+            val fraction = abs(verticalOffset) * 1.0f / appBarLayout.height
             tagView.alpha = fraction
         })
 
         initCategoryList()
     }
 
+    @SuppressLint("DefaultLocale")
+    private fun constructFragment() {
+        val activity = context as? AppCompatActivity ?: return
+
+        mainListFragment = ImageListFragment.build(UnsplashCategory.SEARCH_ID,
+                editText.text.toString().toLowerCase())
+
+        activity.supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.search_result_root, mainListFragment!!)
+                .commitAllowingStateLoss()
+    }
+
+    private fun destroyFragment() {
+        val activity = context as? AppCompatActivity ?: return
+        val fragment = mainListFragment ?: return
+
+        activity.supportFragmentManager.beginTransaction()
+                .remove(fragment)
+                .commitAllowingStateLoss()
+
+        mainListFragment = null
+    }
+
     private fun initCategoryList() {
-        categoryAdapter = CategoryAdapter(context, CategoryAdapter.KEYWORDS)
+        categoryAdapter = CategoryAdapter(context, CategoryAdapter.builtInKeywords)
         categoryAdapter!!.onClickItem = { name ->
-            editText.setText(name, TextView.BufferType.EDITABLE)
-            editText.setSelection(name.length, name.length)
+            val trimmedEmoji = name.substring(3, name.length)
+            editText.setText(trimmedEmoji, TextView.BufferType.EDITABLE)
+            editText.setSelection(trimmedEmoji.length, trimmedEmoji.length)
             onClickSearch()
         }
         categoryList.layoutManager = FlexboxLayoutManager(context)
@@ -172,12 +177,10 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
     }
 
     fun onShowing() {
-        mainListFragment?.registerEvent()
         toggleSearchButtons(false, animation = false)
     }
 
     fun onHiding() {
-        mainListFragment?.unregisterEvent()
         hideKeyboard()
         toggleSearchButtons(false, animation = false)
         tagView.animate().alpha(0f).setDuration(100).start()
@@ -190,17 +193,19 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
     }
 
     fun reset() {
+        destroyFragment()
+
         val layoutParams = searchBox.layoutParams as AppBarLayout.LayoutParams
         layoutParams.scrollFlags = 0
         searchBox.layoutParams = layoutParams
-        mainListFragment?.scrollToTop()
-        mainListFragment?.clearData()
         editText.setText("")
+
         categoryList.animate()?.alpha(1f)?.setListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(a: Animator?) {
                 categoryList.visibility = View.VISIBLE
             }
         })?.start()
+
         resultRoot.visibility = View.GONE
     }
 
@@ -222,7 +227,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
         resultRoot.visibility = View.VISIBLE
         tagView.text = "# ${editText.text.toString().toUpperCase()}"
 
-        mainListFragment?.search(editText.text.toString().toLowerCase())
+        constructFragment()
 
         categoryList.animate().alpha(0f).setListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(a: Animator?) {
@@ -236,6 +241,4 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
         editText.setText("")
         toggleSearchButtons(show = false, animation = true)
     }
-
-    fun tryHide(): Boolean = detailView.tryHide()
 }

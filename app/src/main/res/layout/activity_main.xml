@@ -1,20 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-
-    <include
-        layout="@layout/status_placeholder"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/coordinator_layout"
@@ -30,13 +21,61 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/primaryBackgroundColor"
-            android:theme="@style/AppTheme.AppBarOverlay">
+            android:theme="@style/AppTheme.AppBarOverlay"
+            app:elevation="0dp">
 
-            <com.juniperphoton.myersplash.widget.PivotTitleBar
-                android:id="@+id/pivotTitleBar"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_scrollFlags="scroll|enterAlways|snap"/>
+                app:layout_scrollFlags="scroll|enterAlways|snap">
+
+                <include
+                    android:id="@+id/status_bar_placeholder"
+                    layout="@layout/status_placeholder"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:layout_height="50dp" />
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tabLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginBottom="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/moreBtn"
+                    app:layout_constraintTop_toBottomOf="@id/status_bar_placeholder"
+                    app:tabIndicatorColor="@color/primaryTextColor"
+                    app:tabIndicatorFullWidth="false"
+                    app:tabIndicatorHeight="4dp"
+                    app:tabMinWidth="2dp"
+                    app:tabMode="scrollable"
+                    app:tabSelectedTextColor="@color/primaryTextColor"
+                    app:tabTextAppearance="@style/TabTextAppearance"
+                    app:tabTextColor="@color/primaryUnselectedColor" />
+
+                <ImageView
+                    android:id="@+id/moreBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginBottom="8dp"
+                    android:alpha="0.3"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/image_desc"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_more"
+                    android:tint="@color/primaryTextColor"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/status_bar_placeholder" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -44,36 +83,27 @@
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <TextView
             android:id="@+id/tagView"
             style="@style/TagTextView"
             android:alpha="0"
             android:text="# NEW"
-            tools:alpha="0"/>
+            tools:alpha="0" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-    <com.juniperphoton.myersplash.widget.ImageDetailView
-        android:id="@+id/imageDetailView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/searchFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
         android:background="@drawable/ripple"
         android:src="@drawable/vector_ic_search_black"
         app:backgroundTint="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_margin="@dimen/fab_margin"/>
+        app:layout_constraintRight_toRightOf="parent" />
 
     <com.juniperphoton.myersplash.widget.SearchView
         android:id="@+id/searchView"
@@ -83,5 +113,14 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.juniperphoton.myersplash.widget.ImageDetailView
+        android:id="@+id/imageDetailView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
