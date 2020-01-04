@@ -118,20 +118,21 @@ fun UnsplashImage.getDisplayRatio(context: Context): String {
         val decorViewWidth = context.window.decorView.width
         val decorViewHeight = context.window.decorView.height
 
-        val availableWidth = decorViewWidth
         val availableHeight = decorViewHeight - fixedMargin * 2
-        val availableRatio = availableWidth / availableHeight.toFloat()
 
         val imageRatio = this.width / this.height.toFloat()
         val wantedWidth = decorViewWidth
-        val wantedHeight = (wantedWidth / imageRatio)+fixedInfoHeight
-        val wantedRatio = wantedWidth / wantedHeight
+        val wantedHeight = (wantedWidth / imageRatio) + fixedInfoHeight
 
-        return if (wantedRatio < availableRatio) {
-            "$decorViewWidth:$decorViewHeight"
+        val targetWidth = wantedWidth
+        var targetHeight = wantedHeight
+        if (wantedHeight > availableHeight) {
+            targetHeight = availableHeight.toFloat() - fixedInfoHeight
         } else {
-            "$width:$height"
+            targetHeight -= fixedInfoHeight
         }
+
+        return "$targetWidth:$targetHeight"
     } else {
         return "3:2"
     }
