@@ -122,7 +122,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginRight="12dp"
-            android:src="@drawable/ic_apps_black"
+            android:src="@drawable/ic_home"
             app:backgroundTint="@color/LightGray"
             app:fabSize="mini" />
 
@@ -139,7 +139,7 @@
                 android:id="@+id/editConfirmFab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/small_download_ok"
+                android:src="@drawable/ic_save_alt"
                 app:backgroundTint="@color/MyerSplashThemeColor"
                 app:fabSize="normal"
                 app:tint="@android:color/white" />
