@@ -54,6 +54,8 @@
                     app:tabIndicatorHeight="4dp"
                     app:tabMinWidth="2dp"
                     app:tabMode="scrollable"
+                    app:tabPaddingStart="6dp"
+                    app:tabPaddingEnd="6dp"
                     app:tabSelectedTextColor="@color/primaryTextColor"
                     app:tabTextAppearance="@style/TabTextAppearance"
                     app:tabTextColor="@color/primaryUnselectedColor" />
