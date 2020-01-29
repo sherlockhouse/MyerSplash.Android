@@ -615,7 +615,12 @@ class ImageDetailView(context: Context, attrs: AttributeSet
             return
         }
 
-        val shareText = context.getString(R.string.share_text, image.userName, image.downloadUrl)
+        val shareText = if (image.isUnsplash) {
+            context.getString(R.string.share_text, image.userName, image.downloadUrl)
+        } else {
+            context.getString(R.string.share_text_highlights,  image.downloadUrl)
+        }
+
         val contentUri = FileProvider.getUriForFile(context,
                 context.getString(R.string.authorities), file)
         launchShare(contentUri, shareText)

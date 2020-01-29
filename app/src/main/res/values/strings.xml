@@ -51,7 +51,7 @@
     <string name="no_item">NO ITEMS</string>
     <string name="search_by_other_keywords">SEARCH BY OTHER KEYWORDS</string>
     <string name="return_to_content">RETURN TO %s</string>
-    <string name="set_as_wallpaper">EDIT AND SET AS</string>
+    <string name="set_as_wallpaper">PREVIEW AND EDIT</string>
     <string name="search_action" translatable="false">android.myersplash.action.search</string>
     <string name="random_action" translatable="false">android.myersplash.action.search</string>
     <string name="buy_me_a_drink" translatable="false">Treat me a drink via Alipay</string>
@@ -124,7 +124,9 @@
     <string name="share_title">Sharing</string>
     <string name="email_title">Emailing</string>
 
-    <string name="share_text">Share %s\'s amazing photo from MyerSplash app. Download this photo: %s</string>
+    <string name="share_text_highlights">Share this amazing photo with you in MyerSplash. %s</string>
+    <string name="share_text">"Share %s's amazing photo with you in MyerSplash. %s"</string>
+
     <string name="search_empty_hint">Input the keyword to search.</string>
     <string name="all_clear">Cleaned up.</string>
     <string name="clip_image_by_screen">Clip image by screen</string>
