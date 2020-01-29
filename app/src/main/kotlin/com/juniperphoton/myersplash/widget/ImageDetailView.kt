@@ -292,13 +292,15 @@ class ImageDetailView(context: Context, attrs: AttributeSet
             return
         }
 
-        val valueAnimator = ValueAnimator.ofFloat(if (show) 1f else 0f)
-        valueAnimator.addUpdateListener {
-            detailInfoRootLayout.alpha = it.animatedValue as Float
-            shareFAB.alpha = it.animatedValue as Float
-            downloadFlipperLayout.alpha = it.animatedValue as Float
+        ValueAnimator.ofFloat(if (show) 1f else 0f).apply {
+            addUpdateListener {
+                detailInfoRootLayout.alpha = it.animatedValue as Float
+                shareFAB.alpha = it.animatedValue as Float
+                downloadFlipperLayout.alpha = it.animatedValue as Float
+            }
+            duration = ANIMATION_DURATION_FAST_MILLIS
+            start()
         }
-        valueAnimator.setDuration(ANIMATION_DURATION_FAST_MILLIS).start()
     }
 
     private fun resetStatus() {
@@ -317,6 +319,8 @@ class ImageDetailView(context: Context, attrs: AttributeSet
             detailImgRL.translationX = 0f
         }
 
+        Pasteur.info(TAG, "toggleHeroViewAnimation: from $startY to $endY, show: $show")
+
         val startX = detailImgRL.translationX
 
         ValueAnimator.ofFloat(startY, endY).apply {
@@ -326,19 +330,29 @@ class ImageDetailView(context: Context, attrs: AttributeSet
                 detailImgRL.translationX = startX * (1 - it.animatedFraction)
                 detailImgRL.translationY = it.animatedValue as Float
             }
+
             addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationStart(animation: Animator?, isReverse: Boolean) {
+                    super.onAnimationStart(animation, isReverse)
+                    animating = true
+                }
+
                 override fun onAnimationEnd(a: Animator) {
+                    animating = false
+
                     if (!show && clickedView != null) {
                         clickedView!!.visibility = View.VISIBLE
                         toggleMaskAnimation(false)
                         clickedView = null
-                        animating = false
                         quickReset()
                     } else {
-                        toggleDetailRLAnimation(show = true, oneshot = false)
+                        toggleDetailLayoutAnimation(show = true, oneshot = false)
                         toggleDownloadFlipperLayoutAnimation(show = true, oneshot = false)
                         toggleShareBtnAnimation(show = true, oneshot = false)
                     }
+
+                    removeAllUpdateListeners()
+                    removeAllListeners()
                 }
             })
             start()
@@ -361,13 +375,19 @@ class ImageDetailView(context: Context, attrs: AttributeSet
         return (height - detailHeight) / 2f
     }
 
-    private fun toggleDetailRLAnimation(show: Boolean, oneshot: Boolean) {
+    private fun toggleDetailLayoutAnimation(show: Boolean, oneshot: Boolean) {
         Pasteur.info(TAG) {
             "toggleDetailRLAnimation, show: $show, oneshot: $oneshot"
         }
 
         val startY = if (show) -resources.getDimensionPixelSize(R.dimen.img_detail_info_height) else 0
         val endY = if (show) 0 else -resources.getDimensionPixelSize(R.dimen.img_detail_info_height)
+
+        if (oneshot) {
+            animating = false
+            detailInfoRootLayout.translationY = endY.toFloat()
+            return
+        }
 
         detailInfoRootLayout.translationY = startY.toFloat()
 
@@ -384,11 +404,14 @@ class ImageDetailView(context: Context, attrs: AttributeSet
                 }
 
                 override fun onAnimationEnd(a: Animator) {
+                    animating = false
+
                     if (!show) {
                         toggleHeroViewAnimation(detailImgRL.translationY, listPositionY, false)
-                    } else {
-                        animating = false
                     }
+
+                    removeAllUpdateListeners()
+                    removeAllListeners()
                 }
             })
             start()
@@ -398,14 +421,32 @@ class ImageDetailView(context: Context, attrs: AttributeSet
     private fun toggleDownloadFlipperLayoutAnimation(show: Boolean, oneshot: Boolean) {
         val hideX = downloadFlipperLayoutHideOffset
 
+        if (oneshot) {
+            animating = false
+            downloadFlipperLayout.translationX = if (show) 0f else hideX.toFloat()
+            return
+        }
+
         val start = if (show) hideX else 0
         val end = if (show) 0 else hideX
 
-        ValueAnimator().apply {
-            setFloatValues(start.toFloat(), end.toFloat())
+        ValueAnimator.ofFloat(start.toFloat(), end.toFloat()).apply {
             duration = if (oneshot) 0 else ANIMATION_DURATION_VERY_SLOW_MILLIS
             interpolator = DecelerateInterpolator()
             addUpdateListener { animation -> downloadFlipperLayout.translationX = animation.animatedValue as Float }
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    super.onAnimationEnd(animation)
+                    animating = false
+                    removeAllUpdateListeners()
+                    removeAllListeners()
+                }
+
+                override fun onAnimationStart(animation: Animator?) {
+                    super.onAnimationStart(animation)
+                    animating = true
+                }
+            })
             start()
         }
     }
@@ -413,52 +454,93 @@ class ImageDetailView(context: Context, attrs: AttributeSet
     private fun toggleShareBtnAnimation(show: Boolean, oneshot: Boolean) {
         val hideX = shareButtonHideOffset
 
+        if (oneshot) {
+            animating = false
+            shareFAB.translationX = if (show) 0f else hideX.toFloat()
+            return
+        }
+
         val start = if (show) hideX else 0
         val end = if (show) 0 else hideX
 
-        ValueAnimator().apply {
-            setFloatValues(start.toFloat(), end.toFloat())
-            duration = if (oneshot) 0 else ANIMATION_DURATION_VERY_SLOW_MILLIS
+        ValueAnimator.ofFloat(start.toFloat(), end.toFloat()).apply {
+            duration = ANIMATION_DURATION_VERY_SLOW_MILLIS
             interpolator = DecelerateInterpolator()
             addUpdateListener { animation -> shareFAB.translationX = animation.animatedValue as Float }
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    super.onAnimationEnd(animation)
+                    animating = false
+                    removeAllUpdateListeners()
+                    removeAllListeners()
+                }
+
+                override fun onAnimationStart(animation: Animator?) {
+                    super.onAnimationStart(animation)
+                    animating = true
+                }
+            })
             start()
         }
     }
 
     private fun toggleMaskAnimation(show: Boolean) {
-        val animator = ValueAnimator.ofArgb(if (show) Color.TRANSPARENT else ContextCompat.getColor(context, R.color.MaskColor),
-                if (show) ContextCompat.getColor(context, R.color.MaskColor) else Color.TRANSPARENT)
-        animator.duration = ANIMATION_DURATION_FAST_MILLIS
-        animator.addUpdateListener { animation -> detailRootScrollView.background = ColorDrawable(animation.animatedValue as Int) }
-        animator.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationStart(a: Animator) {
-                if (show) {
-                    onShowing?.invoke()
-                } else {
-                    onHiding?.invoke()
-                }
+        ValueAnimator.ofArgb(if (show) {
+            Color.TRANSPARENT
+        } else {
+            ContextCompat.getColor(context, R.color.MaskColor)
+        }, if (show) {
+            ContextCompat.getColor(context, R.color.MaskColor)
+        } else {
+            Color.TRANSPARENT
+        }).apply {
+            duration = ANIMATION_DURATION_FAST_MILLIS
+            addUpdateListener { animation ->
+                detailRootScrollView.background = ColorDrawable(animation.animatedValue as Int)
             }
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationStart(a: Animator) {
+                    animating = true
 
-            override fun onAnimationEnd(a: Animator) {
-                if (show) {
-                    onShown?.invoke()
-                } else {
-                    resetStatus()
-                    detailRootScrollView.visibility = View.INVISIBLE
-                    onHidden?.invoke()
+                    if (show) {
+                        onShowing?.invoke()
+                    } else {
+                        onHiding?.invoke()
+                    }
                 }
-            }
-        })
-        animator.start()
+
+                override fun onAnimationEnd(a: Animator) {
+                    animating = false
+
+                    if (show) {
+                        onShown?.invoke()
+                    } else {
+                        resetStatus()
+                        detailRootScrollView.visibility = View.INVISIBLE
+                        onHidden?.invoke()
+                    }
+
+                    removeAllUpdateListeners()
+                    removeAllListeners()
+                }
+            })
+            start()
+        }
     }
 
     private fun hideDetailPanel() {
-        if (animating) return
+        if (animating) {
+            return
+        }
 
         val oneshot = detailInfoRootLayout.alpha == 0f
-        toggleDetailRLAnimation(false, oneshot)
+        toggleDetailLayoutAnimation(false, oneshot)
         toggleDownloadFlipperLayoutAnimation(false, oneshot)
         toggleShareBtnAnimation(false, oneshot)
+
+        if (oneshot) {
+            toggleHeroViewAnimation(detailImgRL.translationY, listPositionY, false)
+        }
     }
 
     private fun extractThemeColor(image: UnsplashImage) = scope?.launch {
@@ -533,7 +615,12 @@ class ImageDetailView(context: Context, attrs: AttributeSet
             return
         }
 
-        val shareText = context.getString(R.string.share_text, image.userName, image.downloadUrl)
+        val shareText = if (image.isUnsplash) {
+            context.getString(R.string.share_text, image.userName, image.downloadUrl)
+        } else {
+            context.getString(R.string.share_text_highlights,  image.downloadUrl)
+        }
+
         val contentUri = FileProvider.getUriForFile(context,
                 context.getString(R.string.authorities), file)
         launchShare(contentUri, shareText)
@@ -616,6 +703,10 @@ class ImageDetailView(context: Context, attrs: AttributeSet
      * @param clickData    clicked data info, including the rectF of clicked area and image.
      */
     fun show(clickData: ClickData) {
+        if (animating) {
+            return
+        }
+
         val (rectF, unsplashImage, itemView) = clickData
 
         AppComponent.instance.analysisHelper.logToggleImageDetails()
@@ -711,6 +802,10 @@ class ImageDetailView(context: Context, attrs: AttributeSet
      * Try to hide this view. If this view is fully displayed to user.
      */
     fun tryHide(): Boolean {
+        if (animating) {
+            return false
+        }
+
         scope?.cancel()
         disposable?.dispose()
         disposable = null

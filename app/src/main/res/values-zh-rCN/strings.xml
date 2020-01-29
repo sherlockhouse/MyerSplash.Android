@@ -36,7 +36,7 @@
     <string name="no_item">没有内容</string>
     <string name="search_by_other_keywords">通过其他关键字搜索</string>
     <string name="return_to_content">返回到 %s</string>
-    <string name="set_as_wallpaper">编辑并设置</string>
+    <string name="set_as_wallpaper">预览编辑</string>
     <string name="downloads">下载管理</string>
     <string name="no_downloads">没有下载的内容</string>
     <string name="cleanup_downloads_list">清理下载列表</string>
@@ -85,7 +85,10 @@
     <string name="delete_downloading">删除正在下载的内容</string>
     <string name="delete_downloaded">删除下载完成的内容</string>
     <string name="delete_failed">删除下载失败的内容</string>
-    <string name="share_text">从 MyerSplash app 分享来自 %s\ 的好照片。下载此照片： %s</string>
+
+    <string name="share_text_highlights">通过 MyerSplash 分享这张超赞的图片。%s</string>
+    <string name="share_text">通过 MyerSplash 分享 %s 的这张超赞的图片。%s</string>
+
     <string name="share_title">分享到</string>
     <string name="email_title">发送到</string>
     <string name="search_empty_hint">请输入关键字搜索</string>
