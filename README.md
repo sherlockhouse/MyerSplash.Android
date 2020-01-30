@@ -1,17 +1,46 @@
- # MyerSplash for Android
+# MyerSplash for Android
 
-An Android app that allows you to browse and download high-quality wallpaper from Unsplash.com. MyerSplash for Windows is open-source too. Visit it [here](https://github.com/JuniperPhoton/MyerSplash).
+![](./design/hero.jpg)
 
-![](./assets/hero.jpg)
+## Introduction
+Yet anothor simple and elegant photos & wallpaper app for all platforms.
 
-The project is built under **Kotlin** + **Coroutine** + **Retrofit** + **RxJava** + **Room** and so on. Feel free to communicate and PR.
+Welcome to visit the [UWP](https://github.com/JuniperPhoton/MyerSplash.UWP) and [iOS](https://github.com/JuniperPhoton/MyerSplash.iOS) version :)
+
+## Download
+
+Visit the [website](https://juniperphoton.dev/myersplash/) to download all versions.
+
+## Building
+
+MyerSplash for Android is a standard Android gradle project. Just open it with Android Studio and see what will happen.
+
+Welcome to use CLI to build the apk:
+
+```
+./gradlew clean :app:assembleDebug
+```
+
+Note that in order to access the unsplash API, you must:
+
+- Register as developer in unsplash.com
+- Copy your app secret key
+
+Then in your `local.properties`:
+
+```
+unsplashKey=xxxx
+appcenterKey=xxx
+```
+
+This app uses Microsoft's AppCenter to do the analysis, thus you should also have the appcenterKey too.
 
 ## License 
 The project is released under MIT License.
 
 MIT License
 
-Copyright 2019 JuniperPhoton
+Copyright (c) 2020 JuniperPhoton
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -30,3 +59,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
