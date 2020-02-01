@@ -5,71 +5,52 @@
     android:id="@+id/row_photo_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clickable="true"
     tools:background="@android:color/black"
     tools:layout_height="200dp">
 
-    <View
-        android:id="@+id/row_photo_placeholder"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/primaryHalfBackgroundColor"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.facebook.drawee.view.SimpleDraweeView
-        android:id="@+id/row_photo_iv"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:clickable="true"
-        app:backgroundTint="@color/colorPrimaryDark"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:overlayImage="@color/overlay_image" />
-
-    <FrameLayout
-        android:id="@+id/row_photo_ripple_mask_rl"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
+        android:layout_margin="@dimen/grid_view_item_margin"
+        app:cardBackgroundColor="@color/BackColor1"
+        app:cardCornerRadius="@dimen/cardview_corner_radius"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <FrameLayout
-            android:id="@+id/row_photo_download_rl"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_gravity="right|bottom"
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/row_photo_iv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:backgroundTint="@color/colorPrimaryDark"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:overlayImage="@color/overlay_image"
+            app:placeholderImage="@color/primaryHalfBackgroundColor" />
+
+        <ImageView
+            android:id="@+id/download_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:visibility="visible">
-
-            <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_gravity="center"
-                android:contentDescription="@string/image_desc"
-                android:scaleType="fitXY"
-                android:src="@drawable/vector_ic_file_download"
-                android:visibility="visible"
-                app:tint="@android:color/white" />
-
-        </FrameLayout>
+            android:contentDescription="@string/image_desc"
+            android:padding="12dp"
+            android:src="@drawable/vector_ic_file_download"
+            android:visibility="visible"
+            app:tint="@android:color/white" />
 
         <TextView
             android:id="@+id/row_photo_today_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|left"
-            android:drawableLeft="@drawable/ic_star_yellow"
+            android:layout_gravity="bottom|start"
+            android:drawableStart="@drawable/ic_star_yellow"
             android:drawablePadding="4dp"
             android:gravity="center"
             android:padding="17dp"
@@ -80,5 +61,6 @@
             android:text="@string/recommended_tag"
             android:textColor="@android:color/white"
             android:textStyle="bold" />
-    </FrameLayout>
+    </androidx.cardview.widget.CardView>
+
 </com.juniperphoton.myersplash.widget.item.PhotoItemView>

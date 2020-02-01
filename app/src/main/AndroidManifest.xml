@@ -20,7 +20,6 @@
             android:name=".MainActivity"
             android:label="${APP_NAME}"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -33,18 +32,15 @@
         <activity
             android:name=".activity.SettingsActivity"
             android:label="SETTINGS"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme"/>
         <activity
             android:name=".activity.AboutActivity"
             android:label="ABOUT"
-            android:screenOrientation="portrait"
             android:theme="@style/AboutTheme"/>
         <activity
             android:name=".activity.DownloadsListActivity"
             android:label="DOWNLOADS"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

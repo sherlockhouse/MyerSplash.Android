@@ -17,7 +17,7 @@ import javax.net.ssl.X509TrustManager
 @Suppress("DEPRECATION")
 object CloudService {
     private const val DEFAULT_TIMEOUT = 10
-    const val DEFAULT_REQUEST_COUNT = 10
+    const val DEFAULT_REQUEST_COUNT = 60
     const val DEFAULT_HIGHLIGHTS_COUNT = 60
 
     const val HIGHLIGHTS_DELAY_MS = 200L

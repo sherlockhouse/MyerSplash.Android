@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.DownloadsListAdapter
 import com.juniperphoton.myersplash.di.AppComponent
+import com.juniperphoton.myersplash.extension.getSpanCount
 import com.juniperphoton.myersplash.extension.setVisible
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.restore.restorePosition
@@ -29,24 +30,11 @@ import kotlinx.coroutines.MainScope
 class DownloadsListActivity : BaseActivity(), DownloadsListAdapter.Callback, CoroutineScope by MainScope() {
     companion object {
         private const val TAG = "DownloadsListActivity"
-        private const val DEFAULT_SPAN = 2
-        private const val SCREEN_WIDTH_WITH_DEFAULT_SPAN = 1200
         const val ACTION = "action.downloads"
     }
 
     private lateinit var adapter: DownloadsListAdapter
     private lateinit var viewModel: DownloadListViewModel
-
-    private val spanCount: Int
-        get() {
-            val width = window.decorView.width
-            return if (width <= SCREEN_WIDTH_WITH_DEFAULT_SPAN) {
-                DEFAULT_SPAN
-            } else {
-                val min = resources.getDimensionPixelSize(R.dimen.download_item_min_width)
-                (width / min)
-            }
-        }
 
     private val deleteOptionsMap = mapOf(
             0 to DownloadItem.DOWNLOAD_STATUS_DOWNLOADING,
@@ -67,7 +55,7 @@ class DownloadsListActivity : BaseActivity(), DownloadsListAdapter.Callback, Cor
         adapter = DownloadsListAdapter(this@DownloadsListActivity)
         adapter.callback = this@DownloadsListActivity
 
-        val layoutManager = StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL)
+        val layoutManager = StaggeredGridLayoutManager(getSpanCount() + 1, StaggeredGridLayoutManager.VERTICAL)
 
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter

@@ -1,21 +1,24 @@
 package com.juniperphoton.myersplash.fragment
 
 import android.app.Activity
+import android.content.Context
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.Px
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import butterknife.ButterKnife
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.ImageAdapter
 import com.juniperphoton.myersplash.di.AppComponent
 import com.juniperphoton.myersplash.di.DaggerImageComponent
-import com.juniperphoton.myersplash.extension.setVisible
-import com.juniperphoton.myersplash.extension.usingWifi
+import com.juniperphoton.myersplash.extension.*
 import com.juniperphoton.myersplash.liveDataEvent
 import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.model.UnsplashImage
@@ -174,7 +177,10 @@ class ImageListFragment : Fragment() {
         contentRecyclerView.itemAnimator = null
 
         contentRecyclerView.adapter = adapter
-        contentRecyclerView.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
+
+        val manager = StaggeredGridLayoutManager(
+                context?.getSpanCount() ?: 1, LinearLayoutManager.VERTICAL)
+        contentRecyclerView.layoutManager = manager
 
         LoadMoreListener {
             viewModel.loadMore()

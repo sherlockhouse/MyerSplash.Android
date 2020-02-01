@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.addDimensions
 import com.juniperphoton.myersplash.extension.getNavigationBarSize
@@ -72,14 +73,23 @@ class ImageAdapter(
                 PhotoViewHolder(view)
             }
             ITEM_TYPE_FOOTER -> {
-                footerView = (LayoutInflater.from(context)
+                val footerView = (LayoutInflater.from(context)
                         .inflate(R.layout.row_footer, parent, false) as PhotoFooterView).apply {
                     val padding = context.getNavigationBarSize().y
                     addDimensions(null, padding)
                     setPadding(0, 0, 0, padding)
                     toggleCollapsed()
                 }
-                PhotoViewHolder(footerView!!)
+
+                val lp = StaggeredGridLayoutManager.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                lp.isFullSpan = true
+
+                footerView.layoutParams = lp
+
+                this.footerView = footerView
+
+                PhotoViewHolder(footerView)
             }
             else -> throw IllegalArgumentException("unknown view type")
         }
@@ -108,6 +118,12 @@ class ImageAdapter(
     }
 
     private fun animateContainer(container: View, position: Int) {
+        val lm = recyclerView?.layoutManager as? StaggeredGridLayoutManager ?: return
+
+        if (lm.spanCount > 1) {
+            return
+        }
+
         val lastItemIndex = findLastVisibleItemPosition(recyclerView?.layoutManager)
         if (position >= maxPhotoCountOnScreen || position <= lastPosition
                 || lastItemIndex >= maxPhotoCountOnScreen) {

@@ -4,11 +4,24 @@ import android.annotation.TargetApi
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
+import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import android.graphics.Point
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import com.juniperphoton.myersplash.R
+
+private var isPad: Boolean? = null
+
+fun Context.isPad(): Boolean {
+    if (isPad != null) {
+        return isPad!!
+    }
+    isPad =
+            (this.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE
+    return isPad!!
+}
 
 fun Context.getScreenWidth(): Int = resources.displayMetrics.widthPixels
 
@@ -80,5 +93,37 @@ fun Context.startServiceSafely(intent: Intent) {
         startService(intent)
     } catch (e: Exception) {
         e.printStackTrace()
+    }
+}
+
+fun Context?.getSpanCount(): Int {
+    this ?: return 1
+
+    val width = this.getScreenWidth()
+
+    if (!this.isPad()) {
+        return when (resources.configuration.orientation) {
+            ORIENTATION_PORTRAIT -> {
+                1
+            }
+            else -> {
+                3
+            }
+        }
+    }
+
+    return when (width) {
+        in 0 until 1500 -> {
+            2
+        }
+        in 1500 until 2000 -> {
+            3
+        }
+        in 2000 until 3000 -> {
+            4
+        }
+        else -> {
+            5
+        }
     }
 }

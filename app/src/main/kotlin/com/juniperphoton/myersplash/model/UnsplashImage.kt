@@ -2,6 +2,7 @@ package com.juniperphoton.myersplash.model
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.graphics.Color
 import com.google.gson.annotations.SerializedName
 import com.juniperphoton.myersplash.App
@@ -115,8 +116,14 @@ fun UnsplashImage.getDisplayRatio(context: Context): String {
         val fixedMargin = context.resources
                 .getDimensionPixelSize(R.dimen.detail_fixed_top_bottom_margin)
 
-        val decorViewWidth = context.window.decorView.width
-        val decorViewHeight = context.window.decorView.height
+        var decorViewWidth = context.window.decorView.width
+        var decorViewHeight = context.window.decorView.height
+
+        if (context.resources.configuration.orientation == ORIENTATION_LANDSCAPE) {
+            val temp = decorViewWidth
+            decorViewWidth = decorViewHeight
+            decorViewHeight = temp
+        }
 
         val availableHeight = decorViewHeight - fixedMargin * 2
 

@@ -21,17 +21,14 @@ import com.juniperphoton.myersplash.model.getDisplayRatio
 import com.juniperphoton.myersplash.utils.ImageIO
 import com.juniperphoton.myersplash.utils.Pasteur
 import com.juniperphoton.myersplash.viewmodel.ClickData
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 typealias OnClickPhotoListener = ((ClickData: ClickData) -> Unit)
 typealias OnClickQuickDownloadListener = ((image: UnsplashImage) -> Unit)
 typealias OnBindListener = ((View, Int) -> Unit)
 
-class PhotoItemView(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs
-), View.OnClickListener, CoroutineScope by MainScope() {
+class PhotoItemView(context: Context, attrs: AttributeSet?
+) : ConstraintLayout(context, attrs), View.OnClickListener {
     companion object {
         private const val TAG = "PhotoItemView"
     }
@@ -42,17 +39,11 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : ConstraintLayout(c
     @BindView(R.id.row_photo_root)
     lateinit var rootView: ViewGroup
 
-    @BindView(R.id.row_photo_download_rl)
-    lateinit var downloadRL: ViewGroup
-
-    @BindView(R.id.row_photo_ripple_mask_rl)
-    lateinit var rippleMaskRL: ViewGroup
-
     @BindView(R.id.row_photo_today_tag)
     lateinit var todayTag: View
 
-    @BindView(R.id.row_photo_placeholder)
-    lateinit var placeholder: View
+    @BindView(R.id.card_view)
+    lateinit var cardView: View
 
     var onClickPhoto: OnClickPhotoListener? = null
     var onClickQuickDownload: OnClickQuickDownloadListener? = null
@@ -64,11 +55,14 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : ConstraintLayout(c
 
     override fun onFinishInflate() {
         super.onFinishInflate()
-        ButterKnife.bind(this, this)
-        rippleMaskRL.setOnClickListener(this)
+
+        if (!isInEditMode) {
+            ButterKnife.bind(this, this)
+            cardView.setOnClickListener(this)
+        }
     }
 
-    @OnClick(R.id.row_photo_download_rl)
+    @OnClick(R.id.download_btn)
     fun onClickQuickDownload() {
         unsplashImage?.let {
             onClickQuickDownload?.invoke(it)
@@ -82,17 +76,17 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : ConstraintLayout(c
 
         unsplashImage = image
 
-        val lp = photoView.layoutParams as LayoutParams
+        val lp = cardView.layoutParams as LayoutParams
         lp.dimensionRatio = image.getDisplayRatio(context)
-        photoView.layoutParams = lp
+        cardView.layoutParams = lp
 
         if (!image.isUnsplash) {
             tryUpdateThemeColor()
         }
 
         todayTag.setVisible(image.showTodayTag)
-        rootView.background = ColorDrawable(image.themeColor.getDarker(0.7f))
         photoView.setImageURI(image.listUrl)
+        photoView.hierarchy.setPlaceholderImage(ColorDrawable(image.themeColor.getDarker(0.7f)))
 
         onBind?.invoke(rootView, pos)
     }
@@ -139,7 +133,7 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : ConstraintLayout(c
     }
 
     private fun tryUpdateThemeColor() {
-        extractColorJob = launch {
+        extractColorJob = GlobalScope.launch {
             try {
                 val color = unsplashImage?.extractThemeColor() ?: Int.MIN_VALUE
                 if (color != Int.MIN_VALUE) {

@@ -10,6 +10,8 @@
         android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/grid_view_item_margin"
+        android:layout_marginRight="@dimen/grid_view_item_margin"
         android:clickable="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
