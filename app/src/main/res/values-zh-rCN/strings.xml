@@ -89,6 +89,9 @@
     <string name="share_text_highlights">通过 MyerSplash 分享这张超赞的图片。%s</string>
     <string name="share_text">通过 MyerSplash 分享 %s 的这张超赞的图片。%s</string>
 
+    <string name="settings_sponsorship">在「编辑推荐」里显示赞助图片</string>
+    <string name="settings_sponsorship_title">赞助图片设置</string>
+
     <string name="share_title">分享到</string>
     <string name="email_title">发送到</string>
     <string name="search_empty_hint">请输入关键字搜索</string>

@@ -42,6 +42,9 @@ class UnsplashImage {
     @SerializedName("height")
     var height = 0
 
+    @SerializedName("sponsorship")
+    var sponsorship: UnsplashSponsorship? = null
+
     val downloadLocationLink: String?
         get() = links?.downloadLocation
 
@@ -159,3 +162,5 @@ class UnsplashImageUrl {
     @SerializedName("thumb")
     var thumb: String? = null
 }
+
+class UnsplashSponsorship

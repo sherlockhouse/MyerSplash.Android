@@ -4,10 +4,13 @@ import android.util.Log
 import androidx.annotation.UiThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.juniperphoton.myersplash.App
+import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.api.CloudService
 import com.juniperphoton.myersplash.api.PhotoService
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.model.UnsplashImageFactory
+import com.juniperphoton.myersplash.utils.LocalSettingHelper
 import com.juniperphoton.myersplash.utils.Pasteur
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
@@ -89,6 +92,12 @@ class NewImageRepo @Inject constructor(
         return service.getNewPhotos(page).apply {
             if (page == DEFAULT_PAGE) {
                 add(0, UnsplashImageFactory.createTodayImage())
+            }
+
+            val showSponsorship = LocalSettingHelper.getBoolean(App.instance,
+                    App.instance.getString(R.string.preference_key_show_sponsorship), true)
+            if (!showSponsorship) {
+                removeAll { it.sponsorship != null }
             }
         }
     }
